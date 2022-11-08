@@ -1,0 +1,143 @@
+.modal {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  .modal.open{
+    display: flex;
+  }
+  
+  .modal-container {
+    padding: 16px;
+    animation: modalFadeIn ease 0.5s;
+    background-color: #FFFFFF;
+    min-width: 900px;
+    border-radius: 4px;
+  }
+  .modal-icon{
+    height: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .icon-help{
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    width: 24px;
+    height: 24px;
+    background-position: -89px -145px;
+    
+  }
+  .icon-close{
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    width: 24px;
+    height: 24px;
+    background-position: -145px -145px;
+    cursor: pointer;
+
+  }
+  .modal-header{
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+  }
+  .modal-wrap{
+    padding: 0px 16px;
+  }
+  .modal-header-title{
+    font-size: 24px;
+    color: #1F1F1F;
+    font-weight: 700;
+  }
+  .modal-header-checkbox{
+    display: flex;
+    align-items: center;
+    color: #1F1F1F;
+    font-size: 14px;
+  }
+  .checkbox{
+    margin: 0 12px;
+  }
+  
+  .modal-body-top{
+    display: flex;
+    margin-bottom: 16px;
+  }
+  .modal-body-bottom{
+    margin-bottom: 16px;
+  }
+  .form{
+    position: relative;
+  }
+  .input-error-description{
+    position: absolute;
+    color: #E60000;
+    bottom: -34px;
+  }
+  .form-left{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding-right: 26px;
+  }
+  .form-right{
+    display: flex;
+    flex: 1;
+    flex-direction: column
+  }
+  .form-left-top{
+    display: flex;
+  }
+  .form-right-top{
+    display: flex;
+  }
+  .form-right-body{
+    display: flex;
+  }
+  .form-body-bottom-wrap{
+    display: flex;
+  }
+  .form-radio{
+    line-height: 36px;
+    height: 36px;
+    align-items: center;
+    display: flex;
+  }
+  .radio-title{
+    padding-left: 8px;
+    font-size: 14px;
+    color: #1F1F1F;
+  }
+  .modal-footer{
+    display: flex;
+    padding-top: 16px;
+    border-top: 1px solid #E0E0E0;
+    justify-content: space-between;
+  }
+ 
+  .modal-footer-right{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .width-60{
+    width: 60%;
+  }
+  .width-40{
+    width: 40%;
+  }
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-120px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

@@ -1,0 +1,66 @@
+
+  .overlay {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.08);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  
+  .dialog-body-validate{
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -752px -462px;
+    height: 36px;
+    width: 56px;
+  }
+  .dialog-body-warning{
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -598px -463px;
+    height: 36px;
+    width: 56px;
+  }
+  .dialog-container {
+    padding: 24px;
+    animation: modalFadeIn ease 0.5s;
+    background-color: #FFFFFF;
+    width: 400px;
+    border-radius: 4px;
+  }
+  .dialog-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .dialog-title{
+    color: #1F1F1F;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .dialog-body{
+    margin: 24px 0;
+    display: flex;
+    align-items: center;
+  }
+  .dialog-body span{
+    color: #1F1F1F;
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 24px;
+  }
+  .dialog-footer{
+    border-top: 1px solid #E0E0E0;
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .dialog-footer-btn{
+    display: flex;
+  }
+  .btn + .btn{
+    margin-left: 8px;
+  }

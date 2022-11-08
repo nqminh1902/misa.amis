@@ -1,0 +1,103 @@
+.header{
+    width: 100%;
+    height: 56px;
+    background-color: #FFFFFF;
+    display: flex;
+}
+.header-wrap{
+    display: flex;
+    flex: 1;
+}
+.header-left{
+    flex: 2;
+    display: flex;
+    align-items: center;
+}
+.header-left .header-left-menu{
+    font-size: 24px;
+    padding: 0 16px;
+
+}
+.header-left .header-left-drop-down{
+    font-size: 24px;
+    padding-left: 6px;
+}
+.header-left span{
+    font-weight: 500;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.header-left span:hover{
+    color: #007AFF;
+}
+.header-right{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.header-right>i {
+    font-size: 24px;
+    padding: 0 24px;
+}
+.header-right-user{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header-right-user i{
+    font-size: 32px;
+}
+.header-right-user span{
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 4px;
+}
+.icon-3-gach-sidebar {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -313px -33px;
+    width: 24px;
+    height: 24px;
+    margin:0px 10px;
+}
+.icon-3-gach {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -842px -31px;
+    width: 24px;
+    height: 24px;
+    margin:0px 10px;
+    cursor: pointer;
+}
+.icon-down {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -1124px -357px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+.icon-bell {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -788px -30px;
+    width: 22px;
+	height: 25px;
+    margin: 0 24px;
+    cursor: pointer;
+}
+.icon-user {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -352px -894px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.icon-down-small {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -1788px -468px;
+    width: 24px;
+    height: 24px;
+    margin-right: 26px;
+    cursor: pointer;
+}

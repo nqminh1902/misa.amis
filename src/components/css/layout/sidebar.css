@@ -1,0 +1,204 @@
+.sidebar{
+    width: 200px;
+    height: calc(100vh - 56px);
+    background-color: #393A3E;
+    transition: width .1s linear; 
+    overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar {
+    width: 0;
+  }
+
+.top-sidebar{
+    width: 200px;
+    background-color: #393A3E;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.1s linear;
+}
+.top-sidebar-wrap{
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.top-sidebar-wrap i{
+    color: white;
+    font-size: 20px;
+    padding: 0 12px;
+}
+.top-sidebar-wrap img{
+    width: 30px;
+    height: 30px;
+}
+.top-sidebar-wrap span{
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 16px;
+    color: white;
+    padding-left: 8px;
+}
+.sidebar-small{
+    width: 70px;
+
+}
+.sidebar-list{
+    list-style: none;
+    padding: 12px;
+    cursor: pointer;
+}
+.sidebar-list-item{
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    background-color: #393A3E;
+}
+.sidebar-list-item:hover{
+    background-color: #6b6e77;
+    opacity: 0.7;
+    width: 100%;
+}
+.sidebar-list-item i{
+    color: #FFFFFF;
+    font-size: 20px;
+    padding: 12px;
+}
+.sidebar-list-item span{
+    font-size: 14px;
+    font-weight: 500;
+    color: #FFFFFF;
+}
+.icon-tong-quan{
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -33px -1587px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-tien-mat {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -77px -1587px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-hop-dong {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -120px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-mua-hang {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -165px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-ban-hang {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -209px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-qlhd {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -252px -1587px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-kho {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -294px -1589px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-cong-dung-cu {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -338px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-tai-san-co-dinh {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -382px -1589px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-thue {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -426px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-gia-thanh {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -470px -1587px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-tong-hop {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -514px -1588px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-ngan-sach {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -427px -1661px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-bao-cao {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -552px -1590px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-pttc {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -251px -1664px;
+    width: 20px;
+    height: 24px;
+    opacity: 0.7;
+    margin: 0 16px;
+}
+.icon-9-cham {
+    background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+    background-position: -428px -92px;
+    width: 16px;
+    height: 16px;
+    margin-right: 16px;
+    cursor: pointer;
+}

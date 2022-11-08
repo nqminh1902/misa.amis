@@ -1,0 +1,66 @@
+
+
+.input-width-230{
+    width: 230px;
+  }
+  .input-width-full{
+    width: 100%;
+  }
+  .form{
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      position: relative;
+      margin-bottom: 24px;
+    }
+    .form-label{
+      color: #1F1F1F;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .form-label span{
+      color: #E60000;
+    }
+    .form-input{
+      height: 36px;
+      padding: 12px;
+      outline: none;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      color: #9E9E9E;
+    }
+    .form-input:focus {
+      border: 1px solid #007AFF;
+    }
+    .form-input-error{
+      border: 1px solid #E60000;
+    }
+    .form-input-error:focus{
+      border: 1px solid #E60000;
+    }
+    .error-text{
+      width: 100%;
+      color: #E60000;
+      position: absolute;
+      bottom: -18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: none;
+    }
+    input[required].form-input-error + .error-text{
+      display: block;
+    }
+    .number.form-input-error + .error-text{
+      display: block;
+    }
+    input[type = email].form-input-error + .error-text{
+      display: block;
+    }
+    input[type = date].form-input-error + .error-text{
+      display: block;
+    }
+    .radio.form-input-error + .error-text{
+      display: block;
+    }

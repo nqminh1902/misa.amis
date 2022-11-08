@@ -1,0 +1,106 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+@import url("./layout/header.css");
+@import url("./layout/content.css");
+@import url("./layout/sidebar.css");
+@import url("./Components/button.css");
+@import url("./Components/input.css");
+@import url("./Components/modal.css");
+@import url("./Components/dropdown.css");
+@import url("./Components/radio.css");
+@import url("./Components/dropdownPagin.css");
+@import url("./Components/dialog.css");
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+}
+.container {
+    display: flex;
+}
+
+.content {
+    background-color: #f4f5f7;
+    padding: 26px 26px 16px 26px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 56px);
+    width: calc(100% - 200px);
+    flex: 1;
+}
+
+.show {
+    display: block;
+}
+.hide {
+    display: none;
+}
+.z-index5{
+    z-index: 5;
+}
+.text-right{
+    text-align: right;
+}
+.m-loading{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color:rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 100px;
+    height: 100px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+.justify-spacebetween{
+    justify-content: space-between;
+}
+.margleft-6{
+    margin-left: 6px;
+  }
+  .margleft-16{
+    margin-left: 16px;
+  }
+  .margleft-12{
+    margin-left: 12px;
+  }
+  .margleft-10{
+    margin-left: 10px;
+  }
+  .alig-centre{
+    justify-content: center;
+  }
+  .overlay-feature{
+    position: fixed;
+    display: block;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    z-index: 1;
+}
