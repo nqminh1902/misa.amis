@@ -13,11 +13,18 @@
             <div class="staff-table-search">
                 <div class="delete-all">
                     <p v-show="selected.length > 0">
-                        Đã chọn: <span>{{ pageSize }}</span> bản ghi
+                        Đã chọn: <span>{{ selected.length }}</span> bản ghi
                     </p>
+                    <BaseButton
+                        v-show="selected.length > 0"
+                        title="Bỏ chọn"
+                        class="remove-checkall"
+                        @click="removeCheckbox"
+                    />
                     <button
                         class="btn delete-btn margleft-12"
                         v-show="selected.length > 0"
+                        @click="toggleDeleteMultiple"
                     >
                         Xóa
                     </button>
@@ -28,6 +35,7 @@
                         type="text"
                         class="input-width-230"
                         placeholder="Tìm theo mã, tên nhân viên"
+                        :IsRefresh="refresh"
                         @value="onFilterEmployee($event)"
                     />
                     <div class="search-icon"></div>
@@ -36,6 +44,11 @@
                         class="rotate-icon margleft-12"
                         title="Làm mới"
                         @click="onRefresh"
+                    ></div>
+                    <div
+                        title="Xuất khẩu"
+                        class="export-excel margleft-12"
+                        @click="exportExcelFile"
                     ></div>
                 </div>
             </div>
@@ -47,10 +60,13 @@
                     :filter="filter"
                     :refresh="refresh"
                     :idForm="isShowModal && idForm"
-                    @checkAll="toggleCheckAll($event)"
+                    :deleted="refreshDataSelected"
+                    :notDeleteAll="notDeleteMultiple"
+                    @check="toggleCheckAll($event)"
                     @addForm="onToggleModal"
                     @pageFilter="changePageNumber($event)"
                     @refreshData="onRefresh"
+                    @toast="toggleToast($event)"
                 />
             </div>
         </div>
@@ -71,22 +87,32 @@
                 <div class="pagination-button">
                     <div
                         class="pagination-button-prev margleft-16"
+                        :class="pageNumber == 1 && 'opacity03'"
                         @click="onPrevPage"
+                        title="Quay về"
                     ></div>
                     <div
                         class="pagination-button-next margleft-16"
+                        :class="
+                            Math.ceil(this.totalPage / this.pageSize) ==
+                                pageNumber && 'opacity03'
+                        "
                         @click="onNextPage"
+                        title="Sang trang tiếp"
                     ></div>
                 </div>
             </div>
         </div>
+        <BaseDialogInforVue
+            v-if="deleteMultiple"
+            dialogName="deleteMultiple"
+            :deleteBatch="selected"
+            @deleteSuccess="deleteSuccess()"
+            @closeDialog="toggleDeleteMultiple"
+            @Success="toggleToast($event)"
+        />
+        <BaseToastVue v-if="isSuccess" :success="success" />
     </div>
-
-    <!-- <BaseModalVue
-        v-if="isShowModal"
-        @closeModal="onToggleModal"
-        id="add-form"
-    /> -->
 </template>
 <script>
 import BaseTable from "../base/BaseTable.vue";
@@ -94,6 +120,10 @@ import BaseButton from "../base/BaseButton.vue";
 import BaseInput from "../base/BaseInput.vue";
 import BaseModalVue from "../base/BaseModal.vue";
 import BaseDropdownPagin from "../base/BaseDropdownPagin.vue";
+import BaseDialogInforVue from "../base/BaseDialogInfor.vue";
+import BaseToastVue from "../base/BaseToast.vue";
+import axios from "axios";
+
 export default {
     name: "TheMain",
     components: {
@@ -102,6 +132,18 @@ export default {
         BaseInput,
         BaseModalVue,
         BaseDropdownPagin,
+        BaseDialogInforVue,
+        BaseToastVue,
+    },
+    mounted() {
+        // Sự kiện ấn bàn phím
+        const me = this;
+        window.addEventListener("keyup", function (event) {
+            // Mở form thêm nhân viên
+            if (event.keyCode === 45) {
+                me.onToggleModal();
+            }
+        });
     },
     watch: {
         // Kiểm tra khi pageSize thay đổi thì....
@@ -116,6 +158,9 @@ export default {
             if (newpage == 100) {
                 this.pageNumber = "1";
             }
+        },
+        selected() {
+            this.selected;
         },
     },
     methods: {
@@ -146,7 +191,6 @@ export default {
          */
         getPageSize(page) {
             this.pageSize = page;
-            this.filter = "";
         },
         /**
          * Thực hiện xử lý chuyển dữ liệu pageNumber vào table để chuyển trang
@@ -198,8 +242,10 @@ export default {
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
         toggleCheckAll(e) {
-            this.isChecked = !this.isChecked;
             this.selected = e;
+            if (this.selected.length > 0) {
+                this.isChecked = !this.isChecked;
+            }
         },
         /**
          * Thực hiện xử lý chuyển trang về trang đầu tiên khi tìm kiếm nhân viên
@@ -207,6 +253,70 @@ export default {
          */
         changePageNumber(e) {
             this.pageNumber = e;
+        },
+
+        /**
+         * Thực hiện xử lý để bật đóng dialog
+         **  Author: Nguyễn Quang Minh(26/10/2022)
+         */
+        toggleDeleteMultiple() {
+            this.deleteMultiple = !this.deleteMultiple;
+        },
+
+        /**
+         * Thực hiện xử lý load lại dữ liệu và mảng id muốn xóa
+         **  Author: Nguyễn Quang Minh(24/11/2022)
+         */
+        deleteSuccess() {
+            this.selected = [];
+            this.onRefresh();
+            this.deleteMultiple = !this.deleteMultiple;
+        },
+
+        /**
+         * Thực hiện xử lý bỏ chọn tất cả checkbox
+         **  Author: Nguyễn Quang Minh(24/11/2022)
+         */
+        removeCheckbox() {
+            this.selected = [];
+            this.notDeleteMultiple = !this.notDeleteMultiple;
+        },
+
+        toggleToast(e) {
+            this.success = e;
+            this.isSuccess = !this.isSuccess;
+            setTimeout(() => {
+                this.isSuccess = !this.isSuccess;
+            }, 3000);
+        },
+
+        /**
+         * Thực hiện xử lý xuất dữ liệu ra excel
+         **  Author: Nguyễn Quang Minh(22/11/2022)
+         */
+        exportExcelFile() {
+            try {
+                axios
+                    .post("http://localhost:5165/api/Employees/exportExcel")
+                    .then((res) => {
+                        res.config.responseType = "blob";
+                        axios(res.config).then((res) => {
+                            const url = window.URL.createObjectURL(
+                                new Blob([res.data])
+                            );
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.setAttribute("download", "file.xlsx");
+                            document.body.appendChild(link);
+                            link.click();
+                        });
+                    })
+                    .catch((err) => {
+                        console.log("Không lấy được excel");
+                    });
+            } catch (error) {
+                console.log("Không lấy được excel");
+            }
         },
     },
 
@@ -223,6 +333,11 @@ export default {
             isChecked: false,
             idForm: "add-form",
             selected: [],
+            refreshDataSelected: false,
+            deleteMultiple: false,
+            notDeleteMultiple: false,
+            success: "",
+            isSuccess: false,
         };
     },
 };

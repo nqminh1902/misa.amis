@@ -1,5 +1,10 @@
 <template lang="">
-    <div class="modal" :id="id" @click.self="onCloseModal">
+    <div
+        class="modal"
+        :id="id"
+        @click.self="onCloseModal"
+        @keyup.esc="onCloseModal"
+    >
         <div class="modal-container">
             <div class="modal-icon">
                 <div class="icon-help" title="Giúp"></div>
@@ -28,7 +33,6 @@
                             id=""
                             class="checkbox"
                             tabindex="23"
-                            @blur="tabOrder"
                         />Là nhà cung cấp
                     </div>
                 </div>
@@ -47,19 +51,20 @@
                                             type="text"
                                             name="input"
                                             placeholder="Mã"
-                                            v-model="employee.EmployeeCode"
+                                            v-model="employee.employeeCode"
                                             tabindex="1"
                                             :class="error.EmployeeCode"
                                             required
-                                            ref="input"
+                                            ref="inputEmployeeCode"
+                                            :readonly="id == 'edit-form'"
                                             @blur="
                                                 validateEmployeeCode(
-                                                    employee.EmployeeCode
+                                                    employee.employeeCode
                                                 )
                                             "
                                             @input="
                                                 validateEmployeeCode(
-                                                    employee.EmployeeCode
+                                                    employee.employeeCode
                                                 )
                                             "
                                         />
@@ -83,17 +88,18 @@
                                             name="input"
                                             placeholder="Tên"
                                             tabindex="2"
-                                            v-model="employee.EmployeeName"
+                                            ref="inputEmployeeName"
+                                            v-model="employee.employeeName"
                                             :class="error.EmployeeName"
                                             required
                                             @blur="
                                                 validateEmployeeName(
-                                                    employee.EmployeeName
+                                                    employee.employeeName
                                                 )
                                             "
                                             @input="
                                                 validateEmployeeName(
-                                                    employee.EmployeeName
+                                                    employee.employeeName
                                                 )
                                             "
                                         />
@@ -113,9 +119,10 @@
                                     id="DepartmentName"
                                     tabindex="3"
                                     label="Đơn vị"
+                                    ref="inputDeparment"
                                     :departmentList="departmentList"
-                                    :departmentId="employee.DepartmentId"
-                                    :departmentName="employee.DepartmentName"
+                                    :departmentId="employee.departmentID"
+                                    :departmentName="employee.departmentName"
                                     :departmentError="error.DepartmentName"
                                     @departmentId="getDepartmentId($event)"
                                     @departmentName="getDepartmentName($event)"
@@ -129,7 +136,7 @@
                                         placeholder="Chức danh"
                                         tabindex="4"
                                         id="txtChucDanh"
-                                        v-model="employee.EmployeePosition"
+                                        v-model="employee.jobPositionName"
                                     />
                                 </div>
                             </div>
@@ -146,20 +153,55 @@
                                             placeholder="Ngày sinh"
                                             tabindex="5"
                                             id="txtNgaySinh"
-                                            v-model="employee.DateOfBirth"
+                                            v-model="employee.dateOfBirth"
+                                            :class="error.DateOfBirth"
+                                            @blur="
+                                                validateDOB(
+                                                    employee.dateOfBirth
+                                                )
+                                            "
+                                            @input="
+                                                validateDOB(
+                                                    employee.dateOfBirth
+                                                )
+                                            "
                                         />
-                                        <label class="error-text" title=""
-                                            >Nhập lại ngày sinh</label
+                                        <label
+                                            class="error-text"
+                                            title="Ngày sinh không lớn hơn ngày hiện
+                                            tại"
+                                            v-if="error.DateOfBirth"
+                                            >Ngày sinh không lớn hơn ngày hiện
+                                            tại</label
                                         >
                                     </div>
                                     <div class="form width-60 margleft-16">
                                         <label class="form-label"
                                             >Giới tính
                                         </label>
-                                        <BaseRadioVue
-                                            :genderValue="employee.Gender"
-                                            @gender="getGender($event)"
-                                        />
+                                        <div class="form-radio">
+                                            <BaseRadioVue
+                                                title="Nam"
+                                                value="0"
+                                                tabindex="6"
+                                                :genderValue="employee.gender"
+                                                @gender="getGender($event)"
+                                            />
+                                            <BaseRadioVue
+                                                title="Nữ"
+                                                value="1"
+                                                tabindex="7"
+                                                :genderValue="employee.gender"
+                                                @gender="getGender($event)"
+                                            />
+                                            <BaseRadioVue
+                                                title="Khác"
+                                                value="2"
+                                                tabindex="8"
+                                                :genderValue="employee.gender"
+                                                @gender="getGender($event)"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-right-body">
@@ -176,7 +218,7 @@
                                             name="input"
                                             placeholder="Số CMND"
                                             tabindex="9"
-                                            v-model="employee.IdentityNumber"
+                                            v-model="employee.identityNumber"
                                         />
                                         <label
                                             class="error-text"
@@ -196,7 +238,7 @@
                                             name="input"
                                             tabindex="10"
                                             id="txtNgayCapCMND"
-                                            v-model="employee.IdentityDate"
+                                            v-model="employee.identityDate"
                                         />
                                     </div>
                                 </div>
@@ -209,7 +251,7 @@
                                         placeholder="Nơi cấp"
                                         tabindex="11"
                                         id="txtNoiCap"
-                                        v-model="employee.IdentityPlace"
+                                        v-model="employee.identityPlace"
                                     />
                                 </div>
                             </div>
@@ -224,7 +266,7 @@
                                     placeholder="Địa chỉ"
                                     tabindex="12"
                                     id="txtDiaChi"
-                                    v-model="employee.Address"
+                                    v-model="employee.address"
                                 />
                             </div>
                             <div class="form-body-bottom-wrap">
@@ -241,7 +283,7 @@
                                         placeholder="ĐT di động"
                                         tabindex="13"
                                         id="txtDTDiDong"
-                                        v-model="employee.PhoneNumber"
+                                        v-model="employee.phoneNumber"
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
@@ -258,7 +300,7 @@
                                         title="Điện thoại cố định"
                                         tabindex="14"
                                         id="txtDTCoDinh"
-                                        v-model="employee.TelephoneNumber"
+                                        v-model="employee.telephoneNumber"
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
@@ -270,9 +312,14 @@
                                         placeholder="Email"
                                         tabindex="15"
                                         id="txtEmail"
-                                        v-model="employee.Email"
+                                        v-model="employee.email"
+                                        :class="error.Email"
+                                        @blur="validateEmail(employee.email)"
                                     />
-                                    <label class="error-text" title=""
+                                    <label
+                                        v-if="error.Email"
+                                        class="error-text"
+                                        title="Trường này phải là email"
                                         >Trường này phải là email</label
                                     >
                                 </div>
@@ -290,7 +337,7 @@
                                         placeholder="Tài khoản ngân hàng"
                                         tabindex="16"
                                         id="txtTKNH"
-                                        v-model="employee.BankAccountNumber"
+                                        v-model="employee.bankAccountNumber"
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
@@ -304,7 +351,7 @@
                                         placeholder="Tên ngân hàng"
                                         tabindex="17"
                                         id="txtTenNH"
-                                        v-model="employee.BankName"
+                                        v-model="employee.bankName"
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
@@ -316,7 +363,7 @@
                                         placeholder="Chi nhánh"
                                         tabindex="18"
                                         id="txtChiNhanh"
-                                        v-model="employee.BankBranchName"
+                                        v-model="employee.bankBranchName"
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6"></div>
@@ -332,11 +379,12 @@
                             id="cancel-add-form"
                             title="Hủy"
                             @click="onCloseModal"
+                            @blur="tabOrder"
                         />
                     </div>
                     <div class="modal-footer-right flex-1">
                         <BaseButtonVue
-                            tabindex="19"
+                            tabindex="20"
                             id="cancel-add-form"
                             title="Cất"
                             type="submit"
@@ -345,13 +393,13 @@
                         />
 
                         <BaseButtonVue
-                            v-if="id == 'add-form'"
-                            tabindex="20"
+                            v-if="id != 'edit-form'"
+                            tabindex="19"
                             :id="idButton"
                             :title="titleButton"
                             class="pri-btn margleft-12"
                             type="submit"
-                            @click="saveAndAdd(e)"
+                            @click="saveAndAdd()"
                         />
                     </div>
                 </div>
@@ -359,7 +407,7 @@
         </div>
         <BaseDialogInforVue
             v-if="isError"
-            dialogName="validate"
+            :employeeCode="this.employee.employeeCode"
             :statusValidate="errorMgs"
             @closeDialog="onCloseDialog"
         />
@@ -385,21 +433,26 @@ export default {
     props: {
         id: String,
         employeeCode: String,
-        employeeId: String,
+        employeeID: String,
     },
     beforeMount() {
         // Xử lý UI form thêm hoặc sửa trước khi mở form
         this.handleUI();
-        // Xử lý Lấy mã nhân viên mới
-        this.getNewEmployeeCode();
         // Lấy danh sách phòng ban đưa lên UI
         this.getDepartment();
-        // Lấy dữ liệu nhân viên đưa vào trong form
-        this.userInfo(this.employeeCode);
     },
     // Tự động focus mã nhân viên khi form mở
     mounted() {
-        this.$refs.input.focus();
+        const me = this;
+        this.$refs.inputEmployeeCode.focus();
+        window.addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                me.save();
+            }
+            if (event.keyCode === 16 && event.keyCode === 13) {
+                me.saveAndAdd();
+            }
+        });
     },
     methods: {
         /**
@@ -407,7 +460,7 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         tabOrder() {
-            this.$refs.input.focus();
+            this.$refs.inputEmployeeCode.focus();
         },
         /**
          * Thực hiện xử lý đóng form
@@ -433,12 +486,26 @@ export default {
                 this.title = "Thêm nhân viên";
                 this.idButton = "save";
                 this.titleButton = "Cất và Thêm";
+                // Xử lý Lấy mã nhân viên mới
+                this.getNewEmployeeCode();
             }
             // Sửa nhân viên
             if (this.id == "edit-form") {
                 this.title = "Sửa nhân viên";
                 this.idButton = "edit";
-                this.titleButton = "Cất và Sửa";
+                // Lấy dữ liệu nhân viên đưa vào trong form
+                this.userInfo(this.employeeID);
+            }
+            // Nhân bản nhân viên
+            if (this.id == "duplicate") {
+                this.title = "Thêm nhân viên";
+                this.idButton = "save";
+                this.titleButton = "Cất và Thêm";
+                this.employee.employeeCode = "";
+                // Lấy dữ liệu nhân viên đưa vào trong form
+                this.userInfo(this.employeeID);
+                // Xử lý Lấy mã nhân viên mới
+                this.getNewEmployeeCode();
             }
         },
         /**
@@ -446,17 +513,17 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         getGender(event) {
-            this.employee.Gender = event;
+            this.employee.gender = event;
         },
         /**
          * Thực hiện lấy dữ liệu đơn vị gồm id và tên
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         getDepartmentId(event) {
-            this.employee.DepartmentId = event;
+            this.employee.departmentID = event;
         },
         getDepartmentName(event) {
-            this.employee.DepartmentName = event;
+            this.employee.departmentName = event;
         },
         /**
          * Thực hiện xử lý validate dữ liệu mã nhân viên
@@ -481,27 +548,70 @@ export default {
             }
         },
         /**
+         * Thực hiện xử lý validate dữ liệu trường email
+         **  Author: Nguyễn Quang Minh(22/11/2022)
+         */
+        validateEmail(email) {
+            if (email != "") {
+                // regex email xem có hợp lệ nếu đúng là true
+                let check = String(email)
+                    .toLowerCase()
+                    .match(
+                        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+                    );
+                if (check) {
+                    this.error.Email = "";
+                } else {
+                    this.error.Email = "form-input-error";
+                }
+            } else {
+                this.error.Email = "";
+            }
+        },
+        /**
+         * Thực hiện xử lý validate dữ liệu ngày sinh
+         **  Author: Nguyễn Quang Minh(22/11/2022)
+         */
+        validateDOB(txtDate) {
+            // Đổi date từ date value => Javascript date
+            var today = new Date();
+            var BODate = new Date(txtDate);
+            //Điểu kiện
+
+            if (BODate > today) {
+                this.error.DateOfBirth = "form-input-error";
+            } else {
+                this.error.DateOfBirth = "";
+            }
+        },
+
+        /**
          * Thực hiện validate dữ liệu khi ấn lưu
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         validateForm() {
-            if (!this.employee.EmployeeCode) {
+            // validate trường mã
+            if (!this.employee.employeeCode) {
                 this.error.EmployeeCode = "form-input-error";
+                this.$refs.inputEmployeeCode.focus();
+
                 return false;
             } else {
                 this.error.EmployeeCode = "";
             }
-            if (!this.employee.EmployeeName) {
+            // validate trường tên
+            if (!this.employee.employeeName) {
                 this.error.EmployeeName = "form-input-error";
+                this.$refs.inputEmployeeName.focus();
                 return false;
             } else {
                 this.error.EmployeeName = "";
             }
-            if (!this.employee.DepartmentName) {
+            //validate trường đơn vị
+            if (!this.employee.departmentName) {
                 this.error.DepartmentName = false;
                 return false;
             }
-
             return true;
         },
         /**
@@ -528,17 +638,22 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         getNewEmployeeCode() {
-            if (this.id == "add-form") {
-                axios
-                    .get(
-                        "https://amis.manhnv.net/api/v1/Employees/NewEmployeeCode"
-                    )
-                    .then((response) => {
-                        this.employee.EmployeeCode = response.data;
-                    })
-                    .catch((error) => {
-                        alert("bi lỗi lấy mã nhân viên");
-                    });
+            try {
+                const me = this;
+                if (this.id != "edit-form") {
+                    axios
+                        .get(
+                            "http://localhost:5165/api/Employees/NewEmployeeCode"
+                        )
+                        .then((response) => {
+                            this.employee.employeeCode = response.data;
+                        })
+                        .catch((error) => {
+                            me.$emit("Success", "false");
+                        });
+                }
+            } catch (error) {
+                this.$emit("Success", "false");
             }
         },
         /**
@@ -546,12 +661,19 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         getDepartment() {
-            axios
-                .get("https://amis.manhnv.net/api/v1/Departments")
-                .then((res) => {
-                    this.departmentList = res.data;
-                })
-                .catch((res) => {});
+            const me = this;
+            try {
+                axios
+                    .get("http://localhost:5165/api/Departments")
+                    .then((res) => {
+                        this.departmentList = res.data;
+                    })
+                    .catch((res) => {
+                        me.$emit("Success", "false");
+                    });
+            } catch (error) {
+                me.$emit("Success", "false");
+            }
         },
         /**
          * Thực hiện lấy dữ liệu nhân viên đưa ra form
@@ -560,30 +682,28 @@ export default {
 
         userInfo(id) {
             try {
-                if (this.id == "edit-form") {
+                if (this.id != "add-form") {
                     const me = this;
                     axios
-                        .get(
-                            `https://amis.manhnv.net/api/v1/Employees/filter?employeeFilter=${id}`
-                        )
+                        .get(`http://localhost:5165/api/Employees/${id}`)
                         .then((response) => {
-                            me.employee = response.data.Data[0];
-                            me.employee.DateOfBirth = this.formatDate(
-                                response.data.Data[0].DateOfBirth
+                            me.employee = response.data;
+                            me.employee.dateOfBirth = this.formatDate(
+                                response.data.dateOfBirth
                             );
-                            me.employee.IdentityDate = this.formatDate(
-                                response.data.Data[0].IdentityDate
+                            me.employee.identityDate = this.formatDate(
+                                response.data.identityDate
                             );
-                            me.employee.Gender = response.data.Data[0].Gender;
+                            me.employee.gender = response.data.gender;
+                            me.$emit("removeLoading");
                         })
                         .catch((error) => {
-                            if (error) {
-                                me.isError = !me.isError;
-                                me.errorMgs = error.response.data.userMsg;
-                            }
+                            me.$emit("Success", "false");
                         });
                 }
-            } catch (error) {}
+            } catch (error) {
+                this.$emit("Success", "false");
+            }
         },
         /**
          * Thực hiện Lưu dữ liệu thêm mới hoặc sửa nhân viên
@@ -594,61 +714,97 @@ export default {
             const validate = this.validateForm();
 
             const me = this;
-            // Thêm mới nhân viên
-            if (validate && this.id == "add-form") {
-                if (this.employee.DateOfBirth) {
-                    this.employee.DateOfBirth = new Date(
-                        this.employee.DateOfBirth
-                    );
+
+            try {
+                // Thêm mới nhân viên
+                if (
+                    validate &&
+                    (this.id == "add-form" || this.id == "duplicate")
+                ) {
+                    // Kiểm tra giá trị ô ngày sinh
+                    if (this.employee.dateOfBirth) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.dateOfBirth = new Date(
+                            this.employee.dateOfBirth
+                        );
+                    } else {
+                        this.employee.dateOfBirth = null;
+                    }
+                    // Kiểm tra giá trị ô ngày cấp
+                    if (this.employee.identityDate) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.identityDate = new Date(
+                            this.employee.identityDate
+                        );
+                    } else {
+                        this.employee.identityDate = null;
+                    }
+                    // Đổi kiểu dữ liệu trường gender sang emun
+                    this.employee.gender =
+                        this.employee.gender || this.employee.gender == 0
+                            ? parseInt(this.employee.gender)
+                            : 2;
+                    axios
+                        .post(
+                            "http://localhost:5165/api/Employees",
+                            this.employee
+                        )
+                        .then(function (response) {
+                            // Đóng và load lại trang
+                            me.onCloseModal();
+                            me.$emit("refreshData");
+                            me.$emit("Success", "success");
+                        })
+                        .catch(function (error) {
+                            if (error) {
+                                // Thông báo lỗi
+                                me.isError = !me.isError;
+                                me.errorMgs = error.response.data.userMsg;
+                            }
+                        });
                 }
-                if (this.employee.IdentityDate) {
-                    this.employee.IdentityDate = new Date(
-                        this.employee.IdentityDate
-                    );
+                // Sửa nhân viên
+                if (validate && this.id == "edit-form") {
+                    // Kiểm tra giá trị ô ngày sinh
+                    if (this.employee.dateOfBirth) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.dateOfBirth = new Date(
+                            this.employee.dateOfBirth
+                        );
+                    }
+                    // Kiểm tra giá trị ô ngày sinh
+                    if (this.employee.identityDate) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.identityDate = new Date(
+                            this.employee.identityDate
+                        );
+                    }
+                    // Đổi kiểu dữ liệu trường gender sang emun
+                    this.employee.gender =
+                        this.employee.gender || this.employee.gender == 0
+                            ? parseInt(this.employee.gender)
+                            : 2;
+                    axios
+                        .put(
+                            `http://localhost:5165/api/Employees/${this.employeeID}`,
+                            this.employee
+                        )
+                        .then((response) => {
+                            // Đóng và load loại data
+                            me.onCloseModal();
+                            me.$emit("refreshData");
+                            me.$emit("Success", "success");
+                        })
+                        .catch((error) => {
+                            if (error) {
+                                // Thông báo lỗi
+                                me.isError = !me.isError;
+                                me.errorMgs = error.response.data.userMsg;
+                            }
+                        });
                 }
-                axios
-                    .post(
-                        "https://amis.manhnv.net/api/v1/Employees",
-                        this.employee
-                    )
-                    .then(function (response) {
-                        me.onCloseModal();
-                        me.$emit("refreshData");
-                    })
-                    .catch(function (error) {
-                        if (error) {
-                            me.isError = !me.isError;
-                            me.errorMgs = error.response.data.userMsg;
-                        }
-                    });
-            }
-            // Sửa nhân viên
-            if (validate && this.id == "edit-form") {
-                if (this.employee.DateOfBirth) {
-                    this.employee.DateOfBirth = new Date(
-                        this.employee.DateOfBirth
-                    );
-                }
-                if (this.employee.IdentityDate) {
-                    this.employee.IdentityDate = new Date(
-                        this.employee.IdentityDate
-                    );
-                }
-                axios
-                    .put(
-                        `https://amis.manhnv.net/api/v1/Employees/${this.employeeId}`,
-                        this.employee
-                    )
-                    .then((response) => {
-                        me.onCloseModal();
-                        me.$emit("refreshData");
-                    })
-                    .catch((error) => {
-                        if (error) {
-                            me.isError = !me.isError;
-                            me.errorMgs = error.response.data.userMsg;
-                        }
-                    });
+            } catch (error) {
+                me.$emit("Success", "false");
             }
         },
         /**
@@ -656,53 +812,75 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         saveAndAdd() {
+            // Validate dữ liệu
             const validate = this.validateForm();
 
             const me = this;
-            if (validate && this.id == "add-form") {
-                if (this.employee.DateOfBirth) {
-                    this.employee.DateOfBirth = new Date(
-                        this.employee.DateOfBirth
-                    );
+            try {
+                if (validate) {
+                    // Kiểm tra giá trị ô ngày sinh
+                    if (this.employee.dateOfBirth) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.dateOfBirth = new Date(
+                            this.employee.dateOfBirth
+                        );
+                    } else {
+                        this.employee.dateOfBirth = null;
+                    }
+                    // Kiểm tra giá trị ô ngày sinh
+                    if (this.employee.identityDate) {
+                        // Format dữ liệu ngày tháng
+                        this.employee.identityDate = new Date(
+                            this.employee.identityDate
+                        );
+                    } else {
+                        this.employee.identityDate = null;
+                    }
+                    // Đổi kiểu dữ liệu trường gender sang emun
+                    this.employee.gender =
+                        this.employee.gender || this.employee.gender == 0
+                            ? parseInt(this.employee.gender)
+                            : 2;
+                    axios
+                        .post(
+                            "http://localhost:5165/api/Employees",
+                            this.employee
+                        )
+                        .then(function (response) {
+                            // Load lại dữ liệu và form
+                            me.$emit("refreshData");
+                            me.employee = {
+                                employeeCode: "",
+                                employeeName: "",
+                                departmentID: "",
+                                gender: "",
+                                jobPositionName: "",
+                                dateOfBirth: "",
+                                identityNumber: "",
+                                identityDate: "",
+                                identityPlace: "",
+                                address: "",
+                                phoneNumber: "",
+                                telephoneNumber: "",
+                                email: "",
+                                bankAccountNumber: "",
+                                bankName: "",
+                                bankBranchName: "",
+                                departmentName: "",
+                            };
+                        })
+                        .catch(function (error) {
+                            if (error) {
+                                // Thông báo lỗi
+                                me.isError = !me.isError;
+                                me.errorMgs = error.response.data.userMsg;
+                            }
+                        });
+                    // Lấy mã nhân viên mới
+                    me.getNewEmployeeCode();
                 }
-                if (this.employee.IdentityDate) {
-                    this.employee.IdentityDate = new Date(
-                        this.employee.IdentityDate
-                    );
-                }
-                axios
-                    .post(
-                        "https://amis.manhnv.net/api/v1/Employees",
-                        this.employee
-                    )
-                    .then(function (response) {
-                        me.$emit("refreshData");
-                        me.employee = {
-                            EmployeeCode: "",
-                            EmployeeName: "",
-                            DepartmentId: "",
-                            DepartmentName: "",
-                            Gender: "",
-                            EmployeePosition: "",
-                            DateOfBirth: "",
-                            IdentityNumber: "",
-                            IdentityDate: "",
-                            IdentityPlace: "",
-                            Address: "",
-                            PhoneNumber: "",
-                            TelephoneNumber: "",
-                            Email: "",
-                            BankAccountNumber: "",
-                            BankName: "",
-                            BankBranchName: "",
-                        };
-                    })
-                    .catch(function (error) {
-                        if (error) {
-                            me.isError = !me.isError;
-                            me.errorMgs = error.response.data.userMsg;
-                        }
-                    });
+            } catch (error) {
+                me.$emit("Success", "false");
             }
         },
     },
@@ -713,32 +891,34 @@ export default {
                 EmployeeCode: "",
                 EmployeeName: "",
                 DepartmentName: true,
+                DateOfBirth: "",
+                Email: "",
             },
             employee: {
-                EmployeeCode: "",
-                EmployeeName: "",
-                DepartmentId: "",
-                DepartmentName: "",
-                Gender: "",
-                EmployeePosition: "",
-                DateOfBirth: "",
-                IdentityNumber: "",
-                IdentityDate: "",
-                IdentityPlace: "",
-                Address: "",
-                PhoneNumber: "",
-                TelephoneNumber: "",
-                Email: "",
-                BankAccountNumber: "",
-                BankName: "",
-                BankBranchName: "",
+                employeeCode: "",
+                employeeName: "",
+                departmentID: "",
+                gender: "",
+                jobPositionName: "",
+                dateOfBirth: "",
+                identityNumber: "",
+                identityDate: "",
+                identityPlace: "",
+                address: "",
+                phoneNumber: "",
+                telephoneNumber: "",
+                email: "",
+                bankAccountNumber: "",
+                bankName: "",
+                bankBranchName: "",
+                departmentName: "",
             },
             idButton: "",
             titleButton: "",
             title: "",
             errorMgs: "",
             isError: false,
-            departmentList: {},
+            departmentList: [],
         };
     },
 };

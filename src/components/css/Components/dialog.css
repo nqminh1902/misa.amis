@@ -9,7 +9,7 @@
     background-color: rgba(0, 0, 0, 0.08);
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 667;
   }
   
   .dialog-body-validate{
@@ -42,7 +42,8 @@
     font-weight: 700;
   }
   .dialog-body{
-    margin: 24px 0;
+    margin-bottom: 24px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
   }

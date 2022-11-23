@@ -35,17 +35,17 @@
                 :key="index"
                 class="dropdown-list-item"
                 :class="[
-                    department.DepartmentName == currentDepartment && active,
+                    department.departmentName == currentDepartment && active,
                 ]"
                 id=""
                 @click="
                     onDepartmentValue(
-                        department.DepartmentName,
-                        department.DepartmentId
+                        department.departmentName,
+                        department.departmentID
                     )
                 "
             >
-                {{ department.DepartmentName }}
+                {{ department.departmentName }}
             </li>
         </ul>
         <div
@@ -66,7 +66,7 @@ export default {
         id: String,
         placeholder: String,
         class: String,
-        departmentList: Object,
+        departmentList: Array,
         departmentId: String,
         departmentName: String,
         departmentError: Boolean,

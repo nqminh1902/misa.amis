@@ -29,6 +29,7 @@ export default {
         class: String,
         required: Boolean,
         title: String,
+        IsRefresh: Boolean,
     },
     watch: {
         value() {

@@ -35,3 +35,8 @@ input[type="checkbox"]:focus{
   width: 20px;
   height: 20px;
 }
+.radio-index{
+  display: flex;
+  border-radius: 50px;
+  outline: none;
+}

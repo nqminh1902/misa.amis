@@ -1,3 +1,4 @@
+
 .content-header{
     display: flex;
     justify-content: space-between;
@@ -44,7 +45,7 @@
 }
 .search-icon{
   top: 16px;
-  right: 42px;
+  right: 78px;
   position: absolute;
   background-position: -310px -145px;
   background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
@@ -62,6 +63,16 @@
 .rotate-icon:hover{
   opacity: 0.5;
 }
+.export-excel{
+  background-position:-1264px -87px;
+  background-image: url("../../../assets/icons/Sprites.64af8f61.svg");
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+.export-excel:hover{
+  opacity: 0.5;
+}
 .staff-table-search-icon{
     position: absolute;
     width: 36px;
@@ -77,6 +88,11 @@
     align-items: center;
     justify-content: center;
     background-color: #FFFFFF;
+}
+.not-found{
+  text-align: center;
+  font-size: 24px;
+  
 }
 .data-table{
     overflow-x: auto;
@@ -198,7 +214,7 @@ table, td, th {
     top: 32px;
     right: 20px;
     position: absolute;
-    width: 100%;
+    min-width: 125px;
     background-color: #FFFFFF;
     border: 1px solid #E0E0E0;
     border-radius: 2px;

@@ -1,30 +1,19 @@
 <template lang="">
-    <div class="form-radio">
+    <span
+        class="radio-index"
+        :tabindex="tabindex"
+        :class="value != '0' && 'margleft-12'"
+        @focus="radioActive"
+    >
         <input
             class="radio"
             type="radio"
             name="gender"
-            value="1"
+            :value="value"
             v-model="gender"
-            id="rdMale"
-        /><span class="radio-title">Nam</span>
-        <input
-            class="radio margleft-16"
-            type="radio"
-            name="gender"
-            value="0"
-            v-model="gender"
-            id="rdFemale"
-        /><span class="radio-title">Nữ</span>
-        <input
-            class="radio margleft-16"
-            type="radio"
-            name="gender"
-            value="2"
-            v-model="gender"
-            id="rdOrther"
-        /><span class="radio-title">Khác</span>
-    </div>
+        />
+    </span>
+    <span class="radio-title">{{ title }}</span>
 </template>
 <script>
 export default {
@@ -37,6 +26,19 @@ export default {
         // Nhận dữ liệu từ prop và hiển thị giới tính nhân viên
         genderValue() {
             this.gender = this.genderValue;
+        },
+    },
+    methods: {
+        radioActive() {
+            if (this.title == "Nam") {
+                this.gender = "0";
+            }
+            if (this.title == "Nữ") {
+                this.gender = "1";
+            }
+            if (this.title == "Khác") {
+                this.gender = "2";
+            }
         },
     },
     props: {

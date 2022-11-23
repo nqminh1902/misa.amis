@@ -34,7 +34,6 @@
     position: absolute;
     z-index: 99;
     width: 405px;
-    max-height: 200px;
     box-shadow: 4px 0px 16px rgba(23, 27, 42, 0.24);
     list-style: none;
     padding: 8px;

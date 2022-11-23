@@ -23,7 +23,7 @@
                 <th>
                     <div class="truncate text-centre">Ngày sinh</div>
                 </th>
-                <th>
+                <th class="text-right">
                     <div class="truncate" title="Số chứng minh nhân dân">
                         Số CMND
                     </div>
@@ -34,25 +34,34 @@
                 <th>
                     <div class="truncate">Tên đơn vị</div>
                 </th>
-                <th>
+                <th class="text-right">
                     <div class="truncate">Số tài khoản</div>
                 </th>
                 <th>
                     <div class="truncate">Tên ngân hàng</div>
                 </th>
                 <th>
-                    <div class="truncate">Chi nhánh TK ngân hàng</div>
+                    <div class="truncate" title="Chi nhánh tài khoản ngân hàng">
+                        Chi nhánh TK ngân hàng
+                    </div>
                 </th>
                 <th class="sticky-function table-header-color">
                     <div class="truncate text-centre">Chức năng</div>
                 </th>
             </tr>
         </thead>
-        <tbody>
+        <tbody v-if="totalPage == 0">
+            <tr>
+                <th class="not-found" colspan="12">
+                    Không tìm thấy dữ liệu!!!
+                </th>
+            </tr>
+        </tbody>
+        <tbody v-else>
             <tr
                 class="data-table-detail"
                 v-for="(employee, index) in employees"
-                :key="employee.EmployeeId"
+                :key="employee.employeeID"
                 :class="{ 'background-table': employee.IsChecked }"
                 @dblclick="onToggleModal(index, 'edit-form')"
             >
@@ -64,7 +73,13 @@
                         type="checkbox"
                         class="checkbox-size"
                         v-model="employee.IsChecked"
-                        @click="handleClickCheck(employee.IsChecked, index)"
+                        @click="
+                            handleClickCheck(
+                                employee.IsChecked,
+                                index,
+                                employee.employeeID
+                            )
+                        "
                     />
                 </td>
                 <td
@@ -72,7 +87,7 @@
                     :class="{ 'background-table': employee.IsChecked }"
                 >
                     <div class="truncate">
-                        {{ employee.EmployeeCode }}
+                        {{ employee.employeeCode }}
                     </div>
                 </td>
                 <td
@@ -80,37 +95,39 @@
                     :class="{ 'background-table': employee.IsChecked }"
                 >
                     <div class="truncate">
-                        {{ employee.EmployeeName || "" }}
+                        {{ employee.employeeName || "" }}
                     </div>
                 </td>
                 <td>
-                    <div class="truncate">{{ employee.GenderName || "" }}</div>
+                    <div class="truncate">
+                        {{ handleGender(employee.gender) || "" }}
+                    </div>
                 </td>
                 <td>
                     <div class="truncate text-centre">
-                        {{ handleDOB(employee.DateOfBirth) || "" }}
+                        {{ handleDOB(employee.dateOfBirth) || "" }}
                     </div>
                 </td>
                 <td>
                     <div class="truncate text-right">
-                        {{ employee.PhoneNumber || "" }}
+                        {{ employee.identityNumber || "" }}
                     </div>
                 </td>
                 <td>
                     <div class="truncate">
-                        {{ employee.EmployeePosition || "" }}
+                        {{ employee.jobPositionName || "" }}
                     </div>
                 </td>
                 <td>
                     <div class="truncate">
-                        {{ employee.DepartmentName || "" }}
+                        {{ employee.departmentName || "" }}
                     </div>
                 </td>
                 <td class="text-right">
-                    {{ employee.BankAccountNumber || "" }}
+                    {{ employee.bankAccountNumber || "" }}
                 </td>
-                <td>{{ employee.BankName || "" }}</td>
-                <td>{{ employee.BankBranchName || "" }}</td>
+                <td>{{ employee.bankName || "" }}</td>
+                <td>{{ employee.bankBranchName || "" }}</td>
                 <td
                     class="text-centre sticky-function repeat"
                     :class="[
@@ -128,8 +145,8 @@
                             @click="
                                 onToggleRepair(
                                     index,
-                                    employee.EmployeeCode,
-                                    employee.EmployeeId
+                                    employee.employeeCode,
+                                    employee.employeeID
                                 )
                             "
                             :class="[
@@ -140,7 +157,11 @@
                         ></i>
                     </div>
                     <ul v-show="showDelete == index" class="repair-option">
+                        <li @click.self="onToggleModal(index, 'duplicate')">
+                            Nhân bản
+                        </li>
                         <li id="delete" @click="onDeleteEmployee()">Xóa</li>
+                        <li>Ngừng sử dụng</li>
                     </ul>
                     <div
                         class="overlay-feature"
@@ -150,21 +171,30 @@
                 </td>
                 <BaseModalVue
                     v-if="isModal == index"
-                    :employeeCode="employee.EmployeeCode"
-                    :employeeId="employee.EmployeeId"
+                    :employeeCode="employee.employeeCode"
+                    :employeeID="employee.employeeID"
                     :id="id"
                     @closeModal="onToggleModal"
                     @refreshData="resfreshToPageOne"
+                    @removeLoading="() => (isLoading = false)"
+                    @Success="toastAlert($event)"
                 />
             </tr>
         </tbody>
+
         <BaseDialogInforVue
             v-show="isDialog"
             dialogName="delete"
             :employeeCode="codeEmployee"
-            :employeeId="idEmployee"
+            :employeeID="idEmployee"
             @closeDialog="onDeleteEmployee"
-            @deleteSuccess="onLoadData"
+            @deleteSuccess="
+                () => {
+                    this.onLoadData();
+                    this.selected = [];
+                }
+            "
+            @Success="toastAlert($event)"
         />
         <BaseLoadingVue v-if="isLoading" />
     </table>
@@ -173,6 +203,7 @@
 import BaseLoadingVue from "./BaseLoading.vue";
 import BaseDialogInforVue from "./BaseDialogInfor.vue";
 import BaseModalVue from "../base/BaseModal.vue";
+import BaseButtonVue from "./BaseButton.vue";
 import axios from "axios";
 export default {
     name: "BaseTable",
@@ -180,6 +211,7 @@ export default {
         BaseLoadingVue,
         BaseDialogInforVue,
         BaseModalVue,
+        BaseButtonVue,
     },
     mounted() {
         /**
@@ -202,14 +234,17 @@ export default {
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
         pageSize() {
-            this.onLoadData();
+            this.selectAll = false;
+            //Load lại data dựa theo limit và tìm kiếm
+            this.onFilterData(this.filter, this.pageNumber);
         },
         /**
          * Thực hiện xử lý load dữ liệu chuyển trang
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
         pageNumber() {
-            // Nếu ở trang 2 trở lên mà muốn tìm kiếm thì trang sẽ trở về 1
+            this.selectAll = false;
+            //Nếu ở trang 2 trở lên mà muốn tìm kiếm thì trang sẽ trở về 1
             if (this.filter) {
                 this.onFilterData(this.filter, this.pageNumber);
             } else {
@@ -224,6 +259,7 @@ export default {
         // Thực thi load lại trang
         refresh() {
             this.onLoadData();
+            this.selectAll = false;
         },
         // Emit data isChecked lên component cha
         isChecked() {
@@ -236,6 +272,16 @@ export default {
                 this.onToggleModal();
             }
         },
+
+        // Prop theo dõi khi xóa thành công thì gán lại mảng selected rỗng
+        deleted() {
+            this.selected = [];
+            this.selectAll = false;
+        },
+        notDeleteAll() {
+            this.selectAll = true;
+            this.onToggleCheckAll();
+        },
     },
     methods: {
         /**
@@ -243,18 +289,23 @@ export default {
          **  Author: Nguyễn Quang Minh(4/11/2022)
          */
         onToggleCheckAll() {
-            var select = this.selectAll;
-            const me = this;
-            this.employees.forEach(function (employee) {
-                employee.IsChecked = !select;
-                if (!select) {
-                    me.selected.push(employee.EmployeeId);
-                } else {
-                    me.selected = [];
-                }
-            });
-            this.selectAll = !select;
-            this.$emit("checkAll", this.selected);
+            try {
+                var select = this.selectAll;
+                this.selected = [];
+                const me = this;
+                this.employees.forEach(function (employee) {
+                    employee.IsChecked = !select;
+                    if (!select) {
+                        me.selected.push(employee.employeeID);
+                    } else {
+                        me.selected = [];
+                    }
+                });
+                this.selectAll = !select;
+                this.$emit("check", this.selected);
+            } catch (error) {
+                console.log("Check all bị lỗi");
+            }
         },
 
         /**
@@ -262,41 +313,51 @@ export default {
          * bỏ chọn 1 checkbox khi đang checkbox all
          **  Author: Nguyễn Quang Minh(4/11/2022)
          */
-        handleClickCheck(employeeCheck, index) {
-            const me = this;
-            //Khi bỏ một check box khi đang check all
-            if (employeeCheck) {
-                this.selectAll = false;
-                this.selected = [];
-                this.$emit("checkAll", this.selected);
-            }
-            //Khi chọn tất cả các check box bằng tay từng cái 1
-            else {
-                //Lấy ra list mảng các nhân viên còn lại ngoại trừ checkbox nhân viên đã chọn
-                const checkList = this.employees.filter((item, i) => {
-                    return index != i;
-                });
-                // Kiểm tra tất cả list nhân viên đó Employee.IsChecked = true k
-                const check = checkList.every((item) => {
-                    return item.IsChecked;
-                });
-                // Nếu true thì bật checkall input và hiển thị button xóa tất cả ở component cha
-                if (check) {
-                    this.employees.forEach((employee) => {
-                        employee.IsChecked = true;
-                        me.selected.push(employee.EmployeeId);
+        handleClickCheck(employeeCheck, index, id) {
+            try {
+                const me = this;
+                //Khi bỏ một check box khi đang check all
+                if (employeeCheck) {
+                    this.selectAll = false;
+                    // Bỏ phần tử không muốn xóa khỏi mảng
+                    this.selected = this.selected.filter((item) => {
+                        return item != id;
                     });
-                    this.selectAll = true;
-                    this.$emit("checkAll", this.selected);
+                    this.$emit("check", this.selected);
                 }
-            }
+                //Khi chọn tất cả các check box bằng tay từng cái 1
+                else {
+                    //Lấy ra list mảng các nhân viên còn lại ngoại trừ checkbox nhân viên đã chọn
+                    const checkList = this.employees.filter((item, i) => {
+                        return index != i;
+                    });
+                    // Kiểm tra tất cả list nhân viên đó Employee.IsChecked = true k
+                    const check = checkList.every((item) => {
+                        return item.IsChecked;
+                    });
+                    // Nếu true thì bật checkall input
+                    if (check) {
+                        me.selected = [];
+                        this.employees.forEach((employee) => {
+                            employee.IsChecked = true;
+                            me.selected.push(employee.employeeID);
+                        });
+                        this.selectAll = true;
+                        this.$emit("check", this.selected);
+                    } else {
+                        this.selected.push(id);
+                        this.$emit("check", this.selected);
+                    }
+                }
+            } catch (error) {}
         },
 
         /**
-         * Thực hiện xử lý dropdown Xóa
+         * Thực hiện xử lý dropdown chức năng
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
         onToggleRepair(index, code, id) {
+            //Nếu data isDropdown = true
             if (this.isDropdown) {
                 this.showDelete = null;
                 this.isDropdown = !this.isDropdown;
@@ -309,53 +370,69 @@ export default {
                 this.idEmployee = id;
             }
         },
+
         /**
          * Thực hiện xử lý load data vào table
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
         onLoadData() {
-            this.isLoading = true;
-            axios
-                .get(
-                    `https://amis.manhnv.net/api/v1/Employees/filter?pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
-                )
-                .then((response) => {
-                    this.employees = response.data.Data;
-                    this.employees.forEach((element) => {
-                        element.IsChecked = false;
+            try {
+                this.isLoading = true;
+                axios
+                    .get(
+                        `http://localhost:5165/api/Employees/filter?pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
+                    )
+                    .then((response) => {
+                        this.employees = response.data.data;
+                        this.employees.forEach((element) => {
+                            element.IsChecked = false;
+                        });
+                        this.totalPage = response.data.totalCount;
+                        this.selected = [];
+                        this.$emit("check", this.selected);
+                        this.isLoading = false;
+                    })
+                    .catch((error) => {
+                        this.$emit("toast", "false");
+                        this.isLoading = false;
                     });
-                    this.totalPage = response.data.TotalRecord;
-
-                    this.isLoading = false;
-                })
-                .catch((error) => {
-                    alert("bi lỗi");
-                });
+            } catch (error) {
+                this.$emit("toast", "false");
+            }
         },
         /**
          * Thực hiện xử lý tìm kiếm dữ liệu hiển thị vào trong bảng
          **  Author: Nguyễn Quang Minh(26/10/2022)
          */
-        onFilterData(filter, pageNumber) {
-            this.isLoading = true;
-            if (pageNumber > 1) {
-                this.pageFilter = pageNumber;
-            } else {
-                this.pageFilter = 1;
+        onFilterData(filter, pageNumber, pageSize) {
+            try {
+                this.isLoading = true;
+                if (pageNumber > 1) {
+                    this.pageFilter = pageNumber;
+                } else {
+                    this.pageFilter = 1;
+                }
+                axios
+                    .get(
+                        `http://localhost:5165/api/Employees/filter?keyword=${filter}&pageSize=${
+                            pageSize || this.pageSize
+                        }&pageNumber=${this.pageFilter}`
+                    )
+                    .then((response) => {
+                        this.employees = response.data.data;
+                        this.totalPage = response.data.totalCount;
+                        this.$emit("pageFilter", this.pageFilter);
+                        this.selected = [];
+                        this.$emit("check", this.selected);
+                        this.isLoading = false;
+                    })
+                    .catch((error) => {
+                        this.$emit("toast", "false");
+                        this.isLoading = false;
+                    });
+            } catch (error) {
+                this.$emit("toast", "false");
             }
-            axios
-                .get(
-                    `https://amis.manhnv.net/api/v1/Employees/filter?pageSize=${this.pageSize}&pageNumber=${this.pageFilter}&employeeFilter=${filter}`
-                )
-                .then((response) => {
-                    this.employees = response.data.Data;
-                    this.totalPage = response.data.TotalRecord;
-                    this.$emit("pageFilter", this.pageFilter);
-                    this.isLoading = false;
-                })
-                .catch((error) => {
-                    alert("bi lỗi");
-                });
         },
         /**
          * Thực hiện xử lý dữ liệu DateOfBirth trả về từ api hiển thị ra bảng
@@ -374,6 +451,29 @@ export default {
             }
             return false;
         },
+
+        /**
+         * Thực hiện xử lý dữ liệu Gender trả về từ api hiển thị ra bảng
+         **  Author: Nguyễn Quang Minh(27/10/2022)
+         */
+        handleGender(gender) {
+            const genderEmployee = {
+                Male: 0,
+                Female: 1,
+                Orther: 2,
+            };
+
+            if (gender == genderEmployee.Male) {
+                return "Nam";
+            }
+            if (gender == genderEmployee.Female) {
+                return "Nữ";
+            }
+            if (gender == genderEmployee.Orther) {
+                return "Khác";
+            }
+        },
+
         /**
          * Thực hiện xử lý UI khi click feature Xóa hiện thị Dialog Xóa nhân viên
          **  Author: Nguyễn Quang Minh(27/10/2022)
@@ -388,7 +488,7 @@ export default {
          * Thực hiện xử lý UI ẩn hiện form nhân viên hoặc sửa
          **  Author: Nguyễn Quang Minh(27/10/2022)
          */
-        onToggleModal(index, edit) {
+        onToggleModal(index, typeform) {
             // Nểu isShowModal = true thì chuyển về false và đóng form
             if (this.isShowModal) {
                 this.isShowModal = !this.isShowModal;
@@ -398,18 +498,22 @@ export default {
                     this.$emit("addForm");
                 }
             } else {
-                // Mở form
-                this.isShowModal = !this.isShowModal;
                 this.isModal = index;
                 // Mở form edit nếu có argument edit
-                if (edit) {
-                    this.id = edit;
+                if (typeform == "edit-form") {
+                    this.id = typeform;
+                    this.isLoading = !this.isLoading;
                 }
-                // Mở form add nhân viên nếu có argument edit
-
+                // Mở form edit nếu có argument edit
+                if (typeform == "duplicate") {
+                    this.id = typeform;
+                }
+                // Mở form add nhân viên
                 if (!this.isModal) {
                     this.isModal = 0;
                 }
+                // Mở form
+                this.isShowModal = !this.isShowModal;
             }
         },
         /**
@@ -418,10 +522,31 @@ export default {
          */
         resfreshToPageOne() {
             this.$emit("refreshData");
+            this.isDropdown = false;
+        },
+
+        toastAlert(e) {
+            this.$emit("toast", e);
         },
     },
 
-    props: ["pageSize", "pageNumber", "filter", "refresh", "idForm"],
+    props: {
+        // Truyền sữ liêu số bản ghi trên 1 trang
+        pageSize: Number,
+        // Truyền dữ liệu khi muốn sang trang hoặc quay về
+        pageNumber: Number,
+        // Prop truyền string muốn tìm kiếm
+        filter: String,
+        // Prop truyền thông báo load lại data
+        refresh: Boolean,
+        // Prop truyền id form thêm nhân viên
+        idForm: String,
+        // Prop Truyền thông báo xóa tất cả bản ghi
+        deleted: Boolean,
+        // Prop bỏ chọn tất cả checkbox
+        notDeleteAll: Boolean,
+    },
+
     data() {
         return {
             isDropdown: false,

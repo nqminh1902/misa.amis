@@ -1,16 +1,20 @@
-if (filter) {
-                search = `&employeeFilter=${filter}`;
-                axios
-                    .get(
-                        `https://amis.manhnv.net/api/v1/Employees/filter?pageSize=${this.pageSize}&pageNumber=${this.pageNumber}${search}`
-                    )
-                    .then((response) => {
-                        this.employees = response.data.Data;
-                        this.totalPage = response.data.TotalRecord;
-
-                        this.isLoading = false;
-                    })
-                    .catch((error) => {
-                        alert("bi lỗi");
-                    });
-            } else {
+me.$emit("refreshData");
+                        me.employee = {
+                            employeeCode: "",
+                            employeeName: "",
+                            departmentID: "",
+                            gender: "",
+                            jobPositionName: "",
+                            dateOfBirth: "",
+                            identityNumber: "",
+                            identityDate: "",
+                            identityPlace: "",
+                            address: "",
+                            phoneNumber: "",
+                            telephoneNumber: "",
+                            email: "",
+                            bankAccountNumber: "",
+                            bankName: "",
+                            bankBranchName: "",
+                            departmentName: "",
+                        };

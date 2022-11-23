@@ -38,3 +38,14 @@
     color: white;
     background-color: red;
   }
+  .remove-checkall{
+    color: #E61D1D;
+    border: none;
+    background-color: transparent;
+  }
+  .remove-checkall:hover{
+    background-color: transparent;
+  }
+  .remove-checkall:focus{
+    outline: none;
+  }
