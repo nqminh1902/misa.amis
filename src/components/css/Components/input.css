@@ -47,7 +47,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      display: none;
     }
     input[required].form-input-error + .error-text{
       display: block;

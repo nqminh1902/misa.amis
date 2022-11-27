@@ -1,5 +1,5 @@
 <template lang="">
-    <div class="form-dropdown">
+    <div class="form-dropdown" @keydown="onDepartmentKeycodeValue">
         <label v-if="label" class="form-label"
             >{{ label }} <span>*</span></label
         >
@@ -15,6 +15,7 @@
             :class="{ 'form-input-error': error }"
             @blur="validateDropdown()"
             @click="ToggleDropdown"
+            @keydown.enter="ToggleDropdown"
         />
         <label
             v-if="error"
@@ -26,9 +27,6 @@
             class="icon-down absolute-dropdown"
             :class="[{ dropup: isOpenDropdown }]"
         ></div>
-        <label class="error-text" title="Trường này không được để trống"
-            >Trường này không được để trống</label
-        >
         <ul class="dropdown-list" v-if="isOpenDropdown">
             <li
                 v-for="(department, index) in departmentList"
@@ -71,6 +69,14 @@ export default {
         departmentName: String,
         departmentError: Boolean,
     },
+    // mounted() {
+    //     // Sự kiện phím tắt
+    //     window.addEventListener("keyup", this.openDropdown);
+    // },
+    // beforeUnmount() {
+    //     // Hủy sự kiện phím tắt
+    //     window.removeEventListener("keyup", this.openDropdown);
+    // },
     watch: {
         // Nhận dữ liệu từ prop và chuyền vào combobox
         departmentName() {
@@ -82,6 +88,40 @@ export default {
         },
     },
     methods: {
+        openDropdown(e) {
+            e.preventDefault();
+            let index = 0;
+            if (e.keyCode == 13) {
+                this.ToggleDropdown();
+            }
+            if (e.keyCode == 34) {
+                index++;
+                let department = departmentList[index];
+                this.onDepartmentKeycodeValue(department);
+            }
+        },
+        onDepartmentKeycodeValue(e) {
+            if (e.keyCode == 40 && this.index <= 5) {
+                let department = this.departmentList[this.index];
+                this.currentDepartment = department.departmentName;
+                this.currentId = department.departmentID;
+                this.$emit("departmentId", this.currentId);
+                this.$emit("departmentName", this.currentDepartment);
+                console.log(this.currentId);
+                this.error = false;
+                this.index == 5 ? this.index : this.index++;
+            }
+            if (e.keyCode == 38 && this.index >= 0) {
+                this.index == 0 ? this.index : this.index--;
+                let department = this.departmentList[this.index];
+                this.currentDepartment = department.departmentName;
+                this.currentId = department.departmentID;
+                console.log(this.currentId);
+                this.$emit("departmentId", this.currentId);
+                this.$emit("departmentName", this.currentDepartment);
+                this.error = false;
+            }
+        },
         /**
          * Thực hiện xử lý gán giá trị current currentDepartment để active giá trị được chọn
          **  Author: Nguyễn Quang Minh(26/10/2022)
@@ -128,6 +168,7 @@ export default {
             currentId: null,
             active: "active",
             error: false,
+            index: 0,
         };
     },
 };

@@ -2,25 +2,44 @@
     <div class="overlay" :id="dialogName" @click.self="onClose">
         <div class="dialog-container">
             <div class="dialog-body">
-                <div class="dialog-body-warning"></div>
+                <div
+                    v-if="statusValidate == 'Mã nhân viên bị trùng'"
+                    class="dialog-body-warning"
+                ></div>
+                <div
+                    v-else-if="dialogName == 'validate'"
+                    class="dialog-body-validate"
+                ></div>
+
+                <div v-else class="dialog-body-warning"></div>
 
                 <span class="warning-status">
                     {{ renderStatus() }}
                 </span>
             </div>
-            <div class="dialog-footer">
+            <div
+                class="dialog-footer"
+                :class="dialogName == 'validate' && 'dialog-footer-cancel'"
+            >
                 <div>
                     <button
-                        class="btn dialog-footer-cancel"
+                        class="btn"
                         @click="onClose"
-                        v-if="dialogName"
+                        v-if="dialogName == 'delete'"
+                    >
+                        Không
+                    </button>
+                    <button
+                        class="btn"
+                        @click="onClose"
+                        v-else-if="dialogName == 'deleteMultiple'"
                     >
                         Không
                     </button>
                 </div>
                 <div class="dialog-footer-btn">
                     <button
-                        class="btn delete-btn"
+                        class="btn pri-btn"
                         id="{{buttonId}}"
                         @click="handleDialog"
                     >
@@ -54,15 +73,6 @@ export default {
 
     mounted() {
         this.buttonTextUI();
-        const me = this;
-        window.addEventListener("keyup", function (event) {
-            if (event.keyCode === 13) {
-                me.handleDialog();
-            }
-            if (event.keyCode === 27) {
-                me.onClose();
-            }
-        });
     },
 
     methods: {
@@ -98,7 +108,7 @@ export default {
                     .then((response) => {
                         me.onClose();
                         me.$emit("deleteSuccess");
-                        me.$emit("Success", "success");
+                        me.$emit("Success", "successUpdate");
                     })
                     .catch((error) => {
                         me.$emit("Success", "false");
@@ -122,7 +132,7 @@ export default {
                     .then((response) => {
                         // Mảng id bản ghi đã chọn cho bằng mảng trống
                         me.$emit("deleteSuccess");
-                        me.$emit("Success", "success");
+                        me.$emit("Success", "successUpdate");
                     })
                     .catch((error) => {
                         me.$emit("Success", "false");
@@ -143,8 +153,11 @@ export default {
             if (this.dialogName == "deleteMultiple") {
                 return "Bạn có thực sự muốn xóa nhân viên đã chọn không";
             }
-            if (this.statusValidate) {
-                return `Mã nhân viên <${this.employeeCode}> đã tồn tại trong hệ thống, vui lòng kiểm tra lại`;
+            if (this.dialogName == "validate") {
+                if (this.statusValidate == "Mã nhân viên bị trùng") {
+                    return `Mã nhân viên <${this.employeeCode}> đã tồn tại trong hệ thống, vui lòng kiểm tra lại`;
+                }
+                return this.statusValidate;
             }
         },
 
@@ -158,6 +171,8 @@ export default {
                 this.dialogName == "deleteMultiple"
             ) {
                 this.buttonText = "Có";
+            } else if (this.dialogName == "validate") {
+                this.buttonText = "Đóng";
             } else {
                 this.buttonText = "Đồng ý";
             }

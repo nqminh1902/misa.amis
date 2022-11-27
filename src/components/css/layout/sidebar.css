@@ -1,7 +1,7 @@
 .sidebar{
     width: 200px;
     height: calc(100vh - 56px);
-    background-color: #393A3E;
+    background-color: #003166;
     transition: width .1s linear; 
     overflow-y: auto;
 }
@@ -11,7 +11,7 @@
 
 .top-sidebar{
     width: 200px;
-    background-color: #393A3E;
+    background-color: #003166;
     height: 56px;
     display: flex;
     align-items: center;
@@ -57,10 +57,10 @@
     border-radius: 4px;
     display: flex;
     align-items: center;
-    background-color: #393A3E;
+    background-color: #003166;
 }
 .sidebar-list-item:hover{
-    background-color: #6b6e77;
+    background-color: #0062CC;
     opacity: 0.7;
     width: 100%;
 }

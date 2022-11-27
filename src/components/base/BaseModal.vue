@@ -24,7 +24,7 @@
                             id=""
                             class="checkbox"
                             tabindex="22"
-                        />Là khách hàng
+                        />{{ dataResource.isCustomer }}
                     </div>
                     <div class="modal-header-checkbox margleft-6">
                         <input
@@ -33,7 +33,8 @@
                             id=""
                             class="checkbox"
                             tabindex="23"
-                        />Là nhà cung cấp
+                            @blur="tabOrder"
+                        />{{ dataResource.isSupplier }}
                     </div>
                 </div>
 
@@ -44,7 +45,8 @@
                                 <div class="form-left-top">
                                     <div class="form width-40">
                                         <label class="form-label"
-                                            >Mã <span>*</span></label
+                                            >{{ dataResource.code }}
+                                            <span>*</span></label
                                         >
                                         <input
                                             class="form-input"
@@ -70,16 +72,15 @@
                                         />
                                         <label
                                             class="error-text"
-                                            title="Trường này không được để
-                                        trống"
+                                            :title="employeeCodeMsg"
                                             v-if="error.EmployeeCode"
-                                            >Trường này không được để
-                                            trống</label
+                                            >{{ employeeCodeMsg }}</label
                                         >
                                     </div>
                                     <div class="form width-60 margleft-6">
                                         <label class="form-label"
-                                            >Tên <span>*</span></label
+                                            >{{ dataResource.name }}
+                                            <span>*</span></label
                                         >
                                         <input
                                             id="txtTenNhanVien"
@@ -106,10 +107,8 @@
                                         <label
                                             v-if="error.EmployeeName"
                                             class="error-text"
-                                            title="Trường này không được để trống hoặc
-                                        là số"
-                                            >Trường này không được để trống hoặc
-                                            là số</label
+                                            :title="employeeNameMsg"
+                                            >{{ employeeNameMsg }}</label
                                         >
                                     </div>
                                 </div>
@@ -122,13 +121,15 @@
                                     ref="inputDeparment"
                                     :departmentList="departmentList"
                                     :departmentId="employee.departmentID"
-                                    :departmentName="employee.departmentName"
+                                    :departmentName="departmentName"
                                     :departmentError="error.DepartmentName"
                                     @departmentId="getDepartmentId($event)"
                                     @departmentName="getDepartmentName($event)"
                                 />
                                 <div class="form">
-                                    <label class="form-label">Chức danh</label>
+                                    <label class="form-label">{{
+                                        dataResource.jobPositionName
+                                    }}</label>
                                     <input
                                         class="form-input"
                                         type="text"
@@ -144,7 +145,7 @@
                                 <div class="form-right-top">
                                     <div class="form width-40">
                                         <label class="form-label"
-                                            >Ngày sinh
+                                            >{{ dataResource.dob }}
                                         </label>
                                         <input
                                             class="form-input"
@@ -171,13 +172,12 @@
                                             title="Ngày sinh không lớn hơn ngày hiện
                                             tại"
                                             v-if="error.DateOfBirth"
-                                            >Ngày sinh không lớn hơn ngày hiện
-                                            tại</label
+                                            >{{ dataResource.errorDate }}</label
                                         >
                                     </div>
                                     <div class="form width-60 margleft-16">
                                         <label class="form-label"
-                                            >Giới tính
+                                            >{{ dataResource.gender }}
                                         </label>
                                         <div class="form-radio">
                                             <BaseRadioVue
@@ -209,29 +209,41 @@
                                         <label
                                             class="form-label"
                                             title="Số chứng minh nhân dân"
-                                            >Số CMND
+                                            >{{ dataResource.identityNumber }}
                                         </label>
                                         <input
                                             id="txtCMND"
-                                            class="form-input number"
+                                            class="form-input"
+                                            :class="error.identityNumber"
                                             type="text"
                                             name="input"
                                             placeholder="Số CMND"
                                             tabindex="9"
                                             v-model="employee.identityNumber"
+                                            @blur="
+                                                validateIdentityNumber(
+                                                    employee.identityNumber
+                                                )
+                                            "
+                                            @input="
+                                                validateIdentityNumber(
+                                                    employee.identityNumber
+                                                )
+                                            "
                                         />
                                         <label
                                             class="error-text"
-                                            title="Trường này phải là số, nhỏ hơn 11
-                                        ký tự"
-                                            >Trường này phải là số, nhỏ hơn 10
-                                            ký tự
-                                        </label>
+                                            :title="dataResource.errorNumber"
+                                            v-if="error.identityNumber"
+                                            >{{
+                                                dataResource.errorNumber
+                                            }}</label
+                                        >
                                     </div>
                                     <div class="form width-40 margleft-6">
-                                        <label class="form-label"
-                                            >Ngày cấp</label
-                                        >
+                                        <label class="form-label">{{
+                                            dataResource.identityDate
+                                        }}</label>
                                         <input
                                             class="form-input"
                                             type="date"
@@ -243,7 +255,9 @@
                                     </div>
                                 </div>
                                 <div class="form">
-                                    <label class="form-label">Nơi cấp </label>
+                                    <label class="form-label"
+                                        >{{ dataResource.identityAddress }}
+                                    </label>
                                     <input
                                         class="form-input"
                                         type="text"
@@ -258,7 +272,9 @@
                         </div>
                         <div class="modal-body-bottom">
                             <div class="form">
-                                <label class="form-label">Địa chỉ</label>
+                                <label class="form-label">{{
+                                    dataResource.address
+                                }}</label>
                                 <input
                                     class="form-input"
                                     type="text"
@@ -274,7 +290,7 @@
                                     <label
                                         class="form-label"
                                         title="Điện thoại di động"
-                                        >ĐT di động
+                                        >{{ dataResource.phoneNumber }}
                                     </label>
                                     <input
                                         class="form-input number phoneNumber"
@@ -290,7 +306,7 @@
                                     <label
                                         class="form-label"
                                         title="Điện thoại cố định"
-                                        >ĐT cố định
+                                        >{{ dataResource.telephoneNumber }}
                                     </label>
                                     <input
                                         class="form-input number phoneNumber"
@@ -304,7 +320,9 @@
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
-                                    <label class="form-label">Email </label>
+                                    <label class="form-label"
+                                        >{{ dataResource.email }}
+                                    </label>
                                     <input
                                         class="form-input"
                                         type="email"
@@ -320,7 +338,7 @@
                                         v-if="error.Email"
                                         class="error-text"
                                         title="Trường này phải là email"
-                                        >Trường này phải là email</label
+                                        >{{ dataResource.errorEmail }}</label
                                     >
                                 </div>
                                 <div class="form flex-1 margleft-6"></div>
@@ -328,21 +346,38 @@
                             <div class="form-body-bottom-wrap">
                                 <div class="form flex-1">
                                     <label class="form-label"
-                                        >Tài khoản ngân hàng
+                                        >{{ dataResource.bankNumber }}
                                     </label>
                                     <input
-                                        class="form-input number"
+                                        class="form-input"
+                                        :class="error.bankAccountNumber"
                                         type="text"
                                         name="input"
                                         placeholder="Tài khoản ngân hàng"
                                         tabindex="16"
                                         id="txtTKNH"
                                         v-model="employee.bankAccountNumber"
+                                        @blur="
+                                            validateBankAccountNumber(
+                                                employee.bankAccountNumber
+                                            )
+                                        "
+                                        @input="
+                                            validateBankAccountNumber(
+                                                employee.bankAccountNumber
+                                            )
+                                        "
                                     />
+                                    <label
+                                        class="error-text"
+                                        :title="dataResource.errorNumber"
+                                        v-if="error.bankAccountNumber"
+                                        >{{ dataResource.errorNumber }}</label
+                                    >
                                 </div>
                                 <div class="form flex-1 margleft-6">
                                     <label class="form-label"
-                                        >Tên ngân hàng
+                                        >{{ dataResource.bankName }}
                                     </label>
                                     <input
                                         class="form-input"
@@ -355,7 +390,13 @@
                                     />
                                 </div>
                                 <div class="form flex-1 margleft-6">
-                                    <label class="form-label">Chi nhánh</label>
+                                    <label
+                                        class="form-label"
+                                        title="Chi nhánh tài khoản ngân hàng"
+                                        >{{
+                                            dataResource.bankBranchName
+                                        }}</label
+                                    >
                                     <input
                                         class="form-input"
                                         type="text"
@@ -379,7 +420,6 @@
                             id="cancel-add-form"
                             title="Hủy"
                             @click="onCloseModal"
-                            @blur="tabOrder"
                         />
                     </div>
                     <div class="modal-footer-right flex-1">
@@ -409,11 +449,13 @@
             v-if="isError"
             :employeeCode="this.employee.employeeCode"
             :statusValidate="errorMgs"
+            dialogName="validate"
             @closeDialog="onCloseDialog"
         />
     </div>
 </template>
 <script>
+import * as resource from "../../common/resources";
 import BaseInputVue from "./BaseInput.vue";
 import BaseButtonVue from "./BaseButton.vue";
 import BaseDropdownVue from "./BaseDropdown.vue";
@@ -445,16 +487,47 @@ export default {
     mounted() {
         const me = this;
         this.$refs.inputEmployeeCode.focus();
-        window.addEventListener("keyup", function (event) {
-            if (event.keyCode === 13) {
-                me.save();
-            }
-            if (event.keyCode === 16 && event.keyCode === 13) {
-                me.saveAndAdd();
-            }
-        });
+        // Sự kiện phím tắt
+        window.addEventListener("keyup", this.onKeyUp);
+    },
+    beforeUnmount() {
+        // Hủy sự kiện phím tắt
+        window.removeEventListener("keyup", this.onKeyUp);
     },
     methods: {
+        /**
+         * Hàm xử lý phím tắt
+         * Author: Nguyễn Quang Minh(25/11/2022)
+         */
+        onKeyUp(event) {
+            var me = this;
+            if (event.ctrlKey && event.keyCode === 119) {
+                me.save();
+            }
+        },
+        /**
+         * Thực hiện validate tài khoản ngân hàng
+         **  Author: Nguyễn Quang Minh(25/11/2022)
+         */
+        validateBankAccountNumber(value) {
+            if (isNaN(value)) {
+                this.error.bankAccountNumber = "form-input-error";
+            } else {
+                this.error.bankAccountNumber = "";
+            }
+        },
+
+        /**
+         * Thực hiện validate căn cước
+         **  Author: Nguyễn Quang Minh(25/11/2022)
+         */
+        validateIdentityNumber(value) {
+            if (isNaN(value)) {
+                this.error.identityNumber = "form-input-error";
+            } else {
+                this.error.identityNumber = "";
+            }
+        },
         /**
          * Thực hiện xử lý tab order
          **  Author: Nguyễn Quang Minh(28/10/2022)
@@ -468,6 +541,9 @@ export default {
          */
         onCloseModal() {
             this.$emit("closeModal");
+        },
+        onEnter(e) {
+            this.save();
         },
         /**
          * Thực hiện xử lý đóng dialog
@@ -523,7 +599,7 @@ export default {
             this.employee.departmentID = event;
         },
         getDepartmentName(event) {
-            this.employee.departmentName = event;
+            this.departmentName = event;
         },
         /**
          * Thực hiện xử lý validate dữ liệu mã nhân viên
@@ -532,8 +608,10 @@ export default {
         validateEmployeeCode(code) {
             if (!code) {
                 this.error.EmployeeCode = "form-input-error";
+                this.employeeCodeMsg = "Trường này không được để trống";
             } else {
                 this.error.EmployeeCode = "";
+                this.employeeCodeMsg = "";
             }
         },
         /**
@@ -543,8 +621,10 @@ export default {
         validateEmployeeName(name) {
             if (!name) {
                 this.error.EmployeeName = "form-input-error";
+                this.employeeNameMsg = "Trường này không được để trống";
             } else {
                 this.error.EmployeeName = "";
+                this.employeeNameMsg = "";
             }
         },
         /**
@@ -590,25 +670,72 @@ export default {
          **  Author: Nguyễn Quang Minh(28/10/2022)
          */
         validateForm() {
-            // validate trường mã
+            // validate trường mã trống
             if (!this.employee.employeeCode) {
                 this.error.EmployeeCode = "form-input-error";
+                this.employeeCodeMsg = "Trường này không được để trống";
                 this.$refs.inputEmployeeCode.focus();
-
                 return false;
             } else {
                 this.error.EmployeeCode = "";
+                this.employeeCodeMsg = "";
+            }
+            // validate mã lớn hơn 20 ký tự và ký tự cuối là số
+            if (
+                this.employee.employeeCode.length > 20 ||
+                isNaN(this.employee.employeeCode.slice(-1))
+            ) {
+                this.error.EmployeeCode = "form-input-error";
+                this.employeeCodeMsg =
+                    "Trường này nhỏ 20 ký tự và kết thúc bằng số";
+                this.$refs.inputEmployeeCode.focus();
+                return false;
+            } else {
+                this.error.EmployeeCode = "";
+                this.employeeCodeMsg = "";
             }
             // validate trường tên
             if (!this.employee.employeeName) {
                 this.error.EmployeeName = "form-input-error";
+                this.employeeNameMsg = "Trường này không được để trống";
                 this.$refs.inputEmployeeName.focus();
                 return false;
             } else {
                 this.error.EmployeeName = "";
+                this.employeeNameMsg = "";
+            }
+            // validate trường tên là số
+            if (this.employee.employeeName.match(/^[0-9]+$/) != null) {
+                this.error.EmployeeName = "form-input-error";
+                this.employeeNameMsg = "Trường này không được là số";
+                this.$refs.inputEmployeeName.focus();
+                return false;
+            } else {
+                this.error.EmployeeName = "";
+                this.employeeNameMsg = "";
+            }
+            // Validate trường CMND
+            if (
+                this.employee.identityNumber != "" &&
+                isNaN(this.employee.identityNumber)
+            ) {
+                this.error.identityNumber = "form-input-error";
+                return false;
+            } else {
+                this.error.identityNumber = "";
+            }
+            // Validate trường số tài khoản
+            if (
+                this.employee.bankAccountNumber != "" &&
+                isNaN(this.employee.bankAccountNumber)
+            ) {
+                this.error.bankAccountNumber = "form-input-error";
+                return false;
+            } else {
+                this.error.bankAccountNumber = "";
             }
             //validate trường đơn vị
-            if (!this.employee.departmentName) {
+            if (!this.departmentName) {
                 this.error.DepartmentName = false;
                 return false;
             }
@@ -695,6 +822,7 @@ export default {
                                 response.data.identityDate
                             );
                             me.employee.gender = response.data.gender;
+                            me.departmentName = response.data.departmentName;
                             me.$emit("removeLoading");
                         })
                         .catch((error) => {
@@ -712,7 +840,7 @@ export default {
 
         save() {
             const validate = this.validateForm();
-
+            const api = this.dataResource.api;
             const me = this;
 
             try {
@@ -743,23 +871,24 @@ export default {
                     this.employee.gender =
                         this.employee.gender || this.employee.gender == 0
                             ? parseInt(this.employee.gender)
-                            : 2;
+                            : null;
                     axios
-                        .post(
-                            "http://localhost:5165/api/Employees",
-                            this.employee
-                        )
+                        .post(`${api}Employees`, {
+                            ...this.employee,
+                            modifiedBy: "Nguyễn Quang Minh",
+                            createBy: "Nguyễn Quang Minh",
+                        })
                         .then(function (response) {
                             // Đóng và load lại trang
                             me.onCloseModal();
                             me.$emit("refreshData");
-                            me.$emit("Success", "success");
+                            me.$emit("Success", "successInsert");
                         })
                         .catch(function (error) {
                             if (error) {
                                 // Thông báo lỗi
                                 me.isError = !me.isError;
-                                me.errorMgs = error.response.data.userMsg;
+                                me.errorMgs = error.response.data.userMsg[0];
                             }
                         });
                 }
@@ -783,23 +912,23 @@ export default {
                     this.employee.gender =
                         this.employee.gender || this.employee.gender == 0
                             ? parseInt(this.employee.gender)
-                            : 2;
+                            : null;
                     axios
-                        .put(
-                            `http://localhost:5165/api/Employees/${this.employeeID}`,
-                            this.employee
-                        )
+                        .put(`${api}Employees/${this.employeeID}`, {
+                            ...this.employee,
+                            modifiedBy: "Nguyễn Quang Minh",
+                        })
                         .then((response) => {
                             // Đóng và load loại data
                             me.onCloseModal();
                             me.$emit("refreshData");
-                            me.$emit("Success", "success");
+                            me.$emit("Success", "successUpdate");
                         })
                         .catch((error) => {
                             if (error) {
                                 // Thông báo lỗi
                                 me.isError = !me.isError;
-                                me.errorMgs = error.response.data.userMsg;
+                                me.errorMgs = error.response.data.userMsg[0];
                             }
                         });
                 }
@@ -814,7 +943,7 @@ export default {
         saveAndAdd() {
             // Validate dữ liệu
             const validate = this.validateForm();
-
+            const api = this.dataResource.api;
             const me = this;
             try {
                 if (validate) {
@@ -840,12 +969,15 @@ export default {
                     this.employee.gender =
                         this.employee.gender || this.employee.gender == 0
                             ? parseInt(this.employee.gender)
-                            : 2;
+                            : null;
                     axios
-                        .post(
-                            "http://localhost:5165/api/Employees",
-                            this.employee
-                        )
+                        .post(`${api}Employees`, {
+                            ...this.employee,
+                            modifiedBy: "Nguyễn Quang Minh",
+                            modifiedDate: new Date(),
+
+                            createBy: "Nguyễn Quang Minh",
+                        })
                         .then(function (response) {
                             // Load lại dữ liệu và form
                             me.$emit("refreshData");
@@ -866,14 +998,14 @@ export default {
                                 bankAccountNumber: "",
                                 bankName: "",
                                 bankBranchName: "",
-                                departmentName: "",
                             };
+                            this.departmentName = "";
                         })
                         .catch(function (error) {
                             if (error) {
                                 // Thông báo lỗi
                                 me.isError = !me.isError;
-                                me.errorMgs = error.response.data.userMsg;
+                                me.errorMgs = error.response.data.userMsg[0];
                             }
                         });
                     // Lấy mã nhân viên mới
@@ -886,6 +1018,7 @@ export default {
     },
     data() {
         return {
+            dataResource: resource,
             isDialog: false,
             error: {
                 EmployeeCode: "",
@@ -893,6 +1026,8 @@ export default {
                 DepartmentName: true,
                 DateOfBirth: "",
                 Email: "",
+                bankAccountNumber: "",
+                identityNumber: "",
             },
             employee: {
                 employeeCode: "",
@@ -911,14 +1046,17 @@ export default {
                 bankAccountNumber: "",
                 bankName: "",
                 bankBranchName: "",
-                departmentName: "",
             },
+            departmentName: "",
             idButton: "",
             titleButton: "",
             title: "",
             errorMgs: "",
+            dialogName: "",
             isError: false,
             departmentList: [],
+            employeeCodeMsg: "",
+            employeeNameMsg: "",
         };
     },
 };

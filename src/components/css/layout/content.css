@@ -119,7 +119,7 @@ table, td, th {
     text-align: left;
   }
   .data-table-header{
-    background-color: #EEEEEE !important;
+    background-color: #66AFFF !important;
     color: #1F1F1F;
     font-size: 14px;
     font-weight: 500;
@@ -189,7 +189,7 @@ table, td, th {
     background-color:#E6F2FF ;
   }
   .table-header-color{
-    background-color: #EEEEEE;
+    background-color: #66AFFF;
   }
   .repair{
     color: #041434;

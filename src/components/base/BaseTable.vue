@@ -12,48 +12,56 @@
                     />
                 </th>
                 <th class="sticky-id table-header-color">
-                    <div class="truncate">Mã nhân viên</div>
+                    <div class="truncate">{{ dataResource.employeeCode }}</div>
                 </th>
                 <th class="sticky-name table-header-color">
-                    <div class="truncate">Tên nhân viên</div>
+                    <div class="truncate">{{ dataResource.employeeName }}</div>
                 </th>
                 <th>
-                    <div class="truncate">Giới tính</div>
+                    <div class="truncate">{{ dataResource.gender }}</div>
                 </th>
                 <th>
-                    <div class="truncate text-centre">Ngày sinh</div>
+                    <div class="truncate text-centre">
+                        {{ dataResource.dob }}
+                    </div>
                 </th>
                 <th class="text-right">
                     <div class="truncate" title="Số chứng minh nhân dân">
-                        Số CMND
+                        {{ dataResource.identityNumber }}
                     </div>
                 </th>
                 <th>
-                    <div class="truncate">Chức danh</div>
+                    <div class="truncate">
+                        {{ dataResource.jobPositionName }}
+                    </div>
                 </th>
                 <th>
-                    <div class="truncate">Tên đơn vị</div>
+                    <div class="truncate">
+                        {{ dataResource.departmentName }}
+                    </div>
                 </th>
                 <th class="text-right">
-                    <div class="truncate">Số tài khoản</div>
+                    <div class="truncate">{{ dataResource.bankNumber }}</div>
                 </th>
-                <th>
-                    <div class="truncate">Tên ngân hàng</div>
+                <th style="min-width: 174px">
+                    <div class="truncate">{{ dataResource.bankName }}</div>
                 </th>
                 <th>
                     <div class="truncate" title="Chi nhánh tài khoản ngân hàng">
-                        Chi nhánh TK ngân hàng
+                        {{ dataResource.bankBranchName }}
                     </div>
                 </th>
                 <th class="sticky-function table-header-color">
-                    <div class="truncate text-centre">Chức năng</div>
+                    <div class="truncate text-centre">
+                        {{ dataResource.feature }}
+                    </div>
                 </th>
             </tr>
         </thead>
         <tbody v-if="totalPage == 0">
             <tr>
                 <th class="not-found" colspan="12">
-                    Không tìm thấy dữ liệu!!!
+                    {{ dataResource.notFound }}
                 </th>
             </tr>
         </tbody>
@@ -63,7 +71,6 @@
                 v-for="(employee, index) in employees"
                 :key="employee.employeeID"
                 :class="{ 'background-table': employee.IsChecked }"
-                @dblclick="onToggleModal(index, 'edit-form')"
             >
                 <td
                     class="sticky-checkbox"
@@ -83,6 +90,7 @@
                     />
                 </td>
                 <td
+                    @dblclick="onToggleModal(index, 'edit-form')"
                     class="sticky-id"
                     :class="{ 'background-table': employee.IsChecked }"
                 >
@@ -91,6 +99,7 @@
                     </div>
                 </td>
                 <td
+                    @dblclick="onToggleModal(index, 'edit-form')"
                     class="sticky-name"
                     :class="{ 'background-table': employee.IsChecked }"
                 >
@@ -98,36 +107,53 @@
                         {{ employee.employeeName || "" }}
                     </div>
                 </td>
-                <td>
+                <td @dblclick="onToggleModal(index, 'edit-form')">
                     <div class="truncate">
                         {{ handleGender(employee.gender) || "" }}
                     </div>
                 </td>
-                <td>
-                    <div class="truncate text-centre">
+                <td
+                    class="text-centre"
+                    @dblclick="onToggleModal(index, 'edit-form')"
+                >
+                    <div class="truncate">
                         {{ handleDOB(employee.dateOfBirth) || "" }}
                     </div>
                 </td>
-                <td>
-                    <div class="truncate text-right">
+                <td
+                    class="text-right"
+                    @dblclick="onToggleModal(index, 'edit-form')"
+                >
+                    <div class="truncate">
                         {{ employee.identityNumber || "" }}
                     </div>
                 </td>
-                <td>
+                <td @dblclick="onToggleModal(index, 'edit-form')">
                     <div class="truncate">
                         {{ employee.jobPositionName || "" }}
                     </div>
                 </td>
-                <td>
+                <td
+                    style="min-width: 174px"
+                    @dblclick="onToggleModal(index, 'edit-form')"
+                >
                     <div class="truncate">
                         {{ employee.departmentName || "" }}
                     </div>
                 </td>
-                <td class="text-right">
+                <td
+                    @dblclick="onToggleModal(index, 'edit-form')"
+                    class="text-right"
+                    style="min-width: 144px"
+                >
                     {{ employee.bankAccountNumber || "" }}
                 </td>
-                <td>{{ employee.bankName || "" }}</td>
-                <td>{{ employee.bankBranchName || "" }}</td>
+                <td @dblclick="onToggleModal(index, 'edit-form')">
+                    {{ employee.bankName || "" }}
+                </td>
+                <td @dblclick="onToggleModal(index, 'edit-form')">
+                    {{ employee.bankBranchName || "" }}
+                </td>
                 <td
                     class="text-centre sticky-function repeat"
                     :class="[
@@ -139,7 +165,7 @@
                         class="truncate repair"
                         @click.self="onToggleModal(index, 'edit-form')"
                     >
-                        Sửa
+                        {{ dataResource.edit }}
                         <i
                             class="fa-solid fa-caret-down repair-icon"
                             @click="
@@ -157,11 +183,12 @@
                         ></i>
                     </div>
                     <ul v-show="showDelete == index" class="repair-option">
-                        <li @click.self="onToggleModal(index, 'duplicate')">
-                            Nhân bản
+                        <li @click="onToggleModal(index, 'duplicate')">
+                            {{ dataResource.duplicate }}
                         </li>
-                        <li id="delete" @click="onDeleteEmployee()">Xóa</li>
-                        <li>Ngừng sử dụng</li>
+                        <li id="delete" @click="onDeleteEmployee()">
+                            {{ dataResource.deleteButton }}
+                        </li>
                     </ul>
                     <div
                         class="overlay-feature"
@@ -199,12 +226,15 @@
         <BaseLoadingVue v-if="isLoading" />
     </table>
 </template>
-<script>
+<script lang="ts">
 import BaseLoadingVue from "./BaseLoading.vue";
 import BaseDialogInforVue from "./BaseDialogInfor.vue";
 import BaseModalVue from "../base/BaseModal.vue";
 import BaseButtonVue from "./BaseButton.vue";
+import * as resource from "../../common/resources";
+import { Male, Female, Orther } from "../../common/enum";
 import axios from "axios";
+
 export default {
     name: "BaseTable",
     components: {
@@ -256,7 +286,7 @@ export default {
         filter() {
             this.onFilterData(this.filter);
         },
-        // Thực thi load lại trang
+        //Thực thi load lại trang
         refresh() {
             this.onLoadData();
             this.selectAll = false;
@@ -457,19 +487,13 @@ export default {
          **  Author: Nguyễn Quang Minh(27/10/2022)
          */
         handleGender(gender) {
-            const genderEmployee = {
-                Male: 0,
-                Female: 1,
-                Orther: 2,
-            };
-
-            if (gender == genderEmployee.Male) {
+            if (gender == Male) {
                 return "Nam";
             }
-            if (gender == genderEmployee.Female) {
+            if (gender == Female) {
                 return "Nữ";
             }
-            if (gender == genderEmployee.Orther) {
+            if (gender == Orther) {
                 return "Khác";
             }
         },
@@ -489,6 +513,10 @@ export default {
          **  Author: Nguyễn Quang Minh(27/10/2022)
          */
         onToggleModal(index, typeform) {
+            this.isDropdown = false;
+            this.showDelete = null;
+            this.featureDropdown = null;
+
             // Nểu isShowModal = true thì chuyển về false và đóng form
             if (this.isShowModal) {
                 this.isShowModal = !this.isShowModal;
@@ -549,6 +577,7 @@ export default {
 
     data() {
         return {
+            dataResource: resource,
             isDropdown: false,
             employees: null,
             totalPage: 0,

@@ -1,15 +1,25 @@
 <template lang="">
-    <div class="toast active">
+    <div class="toast">
         <div class="toast-content">
             <i :class="icon" class="icon"></i>
 
             <div class="message">
                 <span
                     class="text text-1"
-                    :class="(success && 'color-success') || 'color-warning'"
-                    >{{ title }}</span
+                    :class="
+                        (success == 'false' && 'color-warning') ||
+                        'color-success'
+                    "
+                    >{{ `${title}` }}</span
                 >
-                <span class="text text-2">{{ description }}</span>
+                <span class="text margleft-6">{{ description }}</span>
+            </div>
+            <div class="closeToast">
+                <a href="">Hoàn tác</a>
+                <i
+                    class="fa-sharp fa-solid fa-xmark close margleft-10"
+                    @click="onClose"
+                ></i>
             </div>
         </div>
     </div>
@@ -24,15 +34,27 @@ export default {
         this.handleUI();
     },
     methods: {
+        onClose() {
+            this.$emit("closeToast");
+        },
         handleUI() {
-            if (this.success == "success") {
+            if (this.success == "successInsert") {
                 this.icon = "fa-solid fa-circle-check color-success";
                 this.title = "Thành công";
-                this.description = "";
+                this.description = "Đã thêm mới";
+            } else if (this.success == "successDelete") {
+                this.icon = "fa-solid fa-circle-check color-success";
+                this.title = "Thành công";
+                this.description = "Đã bị xóa";
+            } else if (this.success == "successUpdate") {
+                this.icon = "fa-solid fa-circle-check color-success";
+                this.title = "Thành công";
+                this.description = "Đã cập nhật";
             } else {
-                this.icon = "fa-solid fa-triangle-exclamation color-warning";
-                this.title = "Thất bại";
-                this.description = "Vui lòng liên hệ với MISA";
+                this.icon = "fa-sharp fa-solid fa-circle-xmark color-warning";
+                this.title = "Lỗi!";
+                this.description =
+                    "Không thể cập nhật được dữ liệu vui lòng liên hệ với Misa";
             }
         },
     },
@@ -46,22 +68,28 @@ export default {
 };
 </script>
 <style scoped>
+a {
+    font-weight: 500;
+    color: #1f1f1f;
+    font-size: 14px;
+}
 .toast {
     position: absolute;
-    bottom: 100px;
-    right: 30px;
-    border-radius: 12px;
+    left: 50%;
+    max-width: 650px;
+    min-height: 56px;
+    border-radius: 4px;
     background: #fff;
-    padding: 20px 35px 20px 25px;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    padding: 20px 16px 20px 16px;
+    box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
     overflow: hidden;
-    transform: translateX(calc(100% + 30px));
+    transform: translateX(-50%);
     transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.35);
     z-index: 669;
 }
 
 .icon {
-    font-size: 32px;
+    font-size: 21px;
 }
 
 .color-success {
@@ -77,7 +105,6 @@ export default {
 
 .toast .toast-content {
     display: flex;
-    align-items: center;
 }
 
 .toast-content .check {
@@ -94,8 +121,8 @@ export default {
 
 .toast-content .message {
     display: flex;
-    flex-direction: column;
-    margin: 0 20px;
+    margin: 0 12px;
+    max-width: 460px;
 }
 
 .message .text {
@@ -107,13 +134,17 @@ export default {
     font-weight: 600;
 }
 
+.closeToast {
+    width: 126px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
 .toast .close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    padding: 5px;
     cursor: pointer;
     opacity: 0.7;
+    width: 16px;
 }
 
 .toast .close:hover {

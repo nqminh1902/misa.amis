@@ -16,11 +16,12 @@
     font-weight: 400;
     font-size: 14px;
     line-height: 18px;
+    cursor: pointer;
 }
-.dropdown:hover {
+/* .dropdown:hover {
     cursor: pointer;
     background-color: #f6f6f6;
-}
+} */
 .dropdown:focus {
     outline: none;
     border: 1px solid #007aff;

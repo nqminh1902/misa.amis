@@ -4,7 +4,7 @@
             <div v-if="isSmallSidebar == false" class="top-sidebar-wrap">
                 <div class="icon-9-cham"></div>
                 <img src="../../assets/img/favicon.ico" alt="" />
-                <span>Kế toán</span>
+                <span>{{ dataResources.webTitle }}</span>
             </div>
             <div
                 v-else
@@ -21,7 +21,7 @@
                 ></div>
                 <span
                     title="Công ty tnhh sản xuất - thương mại - dịch vụ qui phúc"
-                    >Công ty tnhh sản xuất - thương mại - dịch vụ qui phúc</span
+                    >{{ dataResources.companyName }}</span
                 >
                 <div class="icon-down margleft-10"></div>
             </div>
@@ -29,7 +29,7 @@
                 <div class="icon-bell"></div>
                 <div class="header-right-user">
                     <div class="icon-user"></div>
-                    <span>Nguyễn Văn Mạnh</span>
+                    <span>{{ dataResources.userName }}</span>
                 </div>
                 <div class="icon-down-small"></div>
             </div>
@@ -37,8 +37,11 @@
     </div>
 </template>
 <script>
+import * as resources from "../../common/resources";
+
 export default {
     name: "TheHeader",
+
     methods: {
         /**
          * Thực hiện xử lý thu nhỏ sideBar
@@ -53,6 +56,7 @@ export default {
         return {
             isSmallSidebar: false,
             sideBarWidth: "sidebar-small",
+            dataResources: resources,
         };
     },
 };

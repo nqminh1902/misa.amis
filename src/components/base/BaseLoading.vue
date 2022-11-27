@@ -1,6 +1,8 @@
 <template lang="">
     <div class="m-loading">
-        <div class="loader"></div>
+        <div class="loader">
+            <img src="../../assets/icons/loading.svg" alt="" />
+        </div>
     </div>
 </template>
 <script>

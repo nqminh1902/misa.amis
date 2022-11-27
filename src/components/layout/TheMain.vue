@@ -1,7 +1,9 @@
 <template lang="">
     <div class="content" @click="closeRepairOption">
         <div class="content-header">
-            <div class="content-header-title">Nhân viên</div>
+            <div class="content-header-title">
+                {{ dataResources.contentTitle }}
+            </div>
             <BaseButton
                 class="pri-btn"
                 title="Thêm nhân viên mới"
@@ -13,7 +15,9 @@
             <div class="staff-table-search">
                 <div class="delete-all">
                     <p v-show="selected.length > 0">
-                        Đã chọn: <span>{{ selected.length }}</span> bản ghi
+                        {{ dataResources.wasChoose }}
+                        <span>{{ selected.length }}</span>
+                        {{ dataResources.records }}
                     </p>
                     <BaseButton
                         v-show="selected.length > 0"
@@ -26,7 +30,7 @@
                         v-show="selected.length > 0"
                         @click="toggleDeleteMultiple"
                     >
-                        Xóa
+                        {{ dataResources.deleteButton }}
                     </button>
                 </div>
                 <div class="search-box">
@@ -73,7 +77,8 @@
         <div class="content-footer">
             <div class="total-page">
                 <p>
-                    Tổng: <span>{{ totalPage || 0 }}</span> bản ghi
+                    {{ dataResources.total }} <span>{{ totalPage || 0 }}</span>
+                    {{ dataResources.records }}
                 </p>
             </div>
             <div class="pagination">
@@ -82,7 +87,9 @@
                     <span class="pagination-table-row-number">{{
                         updatePage(totalPage)
                     }}</span>
-                    <span class="pagination-table-row-title">bản ghi</span>
+                    <span class="pagination-table-row-title">{{
+                        dataResources.records
+                    }}</span>
                 </div>
                 <div class="pagination-button">
                     <div
@@ -111,10 +118,15 @@
             @closeDialog="toggleDeleteMultiple"
             @Success="toggleToast($event)"
         />
-        <BaseToastVue v-if="isSuccess" :success="success" />
+        <BaseToastVue
+            v-if="isSuccess"
+            :success="success"
+            @closeToast="closeToast"
+        />
     </div>
 </template>
 <script>
+import * as resource from "../../common/resources";
 import BaseTable from "../base/BaseTable.vue";
 import BaseButton from "../base/BaseButton.vue";
 import BaseInput from "../base/BaseInput.vue";
@@ -136,7 +148,7 @@ export default {
         BaseToastVue,
     },
     mounted() {
-        // Sự kiện ấn bàn phím
+        //Sự kiện ấn bàn phím
         const me = this;
         window.addEventListener("keyup", function (event) {
             // Mở form thêm nhân viên
@@ -223,7 +235,6 @@ export default {
          */
         onRefresh() {
             this.refresh = !this.refresh;
-            this.filter = "";
             this.pageNumber = "1";
         },
         /**
@@ -282,12 +293,18 @@ export default {
             this.notDeleteMultiple = !this.notDeleteMultiple;
         },
 
+        // Đóng mở toast
         toggleToast(e) {
             this.success = e;
             this.isSuccess = !this.isSuccess;
             setTimeout(() => {
-                this.isSuccess = !this.isSuccess;
-            }, 3000);
+                this.isSuccess = false;
+            }, 2000);
+        },
+
+        // Đóng toast
+        closeToast() {
+            this.isSuccess = false;
         },
 
         /**
@@ -312,16 +329,17 @@ export default {
                         });
                     })
                     .catch((err) => {
-                        console.log("Không lấy được excel");
+                        this.toggleToast("false");
                     });
             } catch (error) {
-                console.log("Không lấy được excel");
+                this.toggleToast("false");
             }
         },
     },
 
     data() {
         return {
+            dataResources: resource,
             isShowModal: false,
             isPaginationActive: false,
             totalPage: null,
